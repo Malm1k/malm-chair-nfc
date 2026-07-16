@@ -46,12 +46,13 @@
             font-weight: 500;
         }
 
-        /* Сетка ярлыков */
+        /* Центрированная сетка через Flexbox */
         #games-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
+            display: flex; 
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 30px 15px; 
-            justify-items: center;
+            width: 100%;
         }
 
         /* Контейнер одного ярлыка */
@@ -59,7 +60,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
+            width: 100px; /* Фиксированная ширина для ровного выравнивания */
             cursor: pointer;
             background: transparent;
             border: none;
@@ -120,7 +121,7 @@
             color: #d1d1d6;
             text-align: center;
             line-height: 1.2;
-            max-width: 80px;
+            max-width: 90px;
             word-wrap: break-word;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
@@ -197,15 +198,16 @@
         const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTc4YTg0NTEyY2Q5MDAxMzBlYWM2NSIsImlhdCI6MTc4NDEyNDkwNX0.83vjT_TzTttLnkXVDOUESncUMaVQkuejm4F0KmQEuVY";
         const COMPUTER = "MALM%20PC";
 
+        // Массив с реальными названиями файлов с твоего GitHub
         const gamesList = [
-            { name: "Fortnite", trigger: "fortnite", img: "https://ui-avatars.com/api/?name=FN&background=1a1a1d&color=fff&size=200&font-size=0.4&bold=true" },
-            { name: "Counter-Strike 2", trigger: "cs", img: "https://ui-avatars.com/api/?name=CS&background=d97706&color=fff&size=200&font-size=0.4&bold=true" },
-            { name: "Rust", trigger: "rust", img: "https://ui-avatars.com/api/?name=RU&background=dc2626&color=fff&size=200&font-size=0.4&bold=true" },
-            { name: "Arma Reforger", trigger: "arma", img: "https://ui-avatars.com/api/?name=AR&background=4b5563&color=fff&size=200&font-size=0.4&bold=true" },
-            { name: "The Finals", trigger: "finals", img: "https://ui-avatars.com/api/?name=TF&background=ca8a04&color=fff&size=200&font-size=0.4&bold=true" },
-            { name: "Foxhole", trigger: "foxhole", img: "https://ui-avatars.com/api/?name=FH&background=374151&color=fff&size=200&font-size=0.4&bold=true" },
-            { name: "Euro Truck Sim 2", trigger: "ets2", img: "https://ui-avatars.com/api/?name=ET&background=2563eb&color=fff&size=200&font-size=0.4&bold=true" },
-            { name: "ARC Raiders", trigger: "arc", img: "https://ui-avatars.com/api/?name=AC&background=0891b2&color=fff&size=200&font-size=0.4&bold=true" }
+            { name: "Fortnite", trigger: "fortnite", img: "fn.png" },
+            { name: "Counter-Strike 2", trigger: "cs", img: "cs2.png" },
+            { name: "Rust", trigger: "rust", img: "rust.png" },
+            { name: "Arma Reforger", trigger: "arma", img: "armaref.png" },
+            { name: "The Finals", trigger: "finals", img: "finals.png" },
+            { name: "Foxhole", trigger: "foxhole", img: "foxhole.png" },
+            { name: "Euro Truck Simulator 2", trigger: "ets2", img: "ets2.png" },
+            { name: "ARC Raiders", trigger: "arc", img: "arc.png" }
         ];
 
         const container = document.getElementById('games-grid');
@@ -233,7 +235,7 @@
             
             item.innerHTML = `
                 <div class="icon-wrapper">
-                    <img class="icon-img" src="${game.img}" alt="${game.name}">
+                    <img class="icon-img" src="${game.img}" alt="${game.name}" onerror="this.src='https://ui-avatars.com/api/?name=${game.name.charAt(0)}&background=1c1c22&color=fff&size=200'">
                     <div class="cooldown-overlay">
                         <div class="cooldown-spinner">⚙️</div>
                         <div class="cooldown-time">60</div>
@@ -252,12 +254,25 @@
 
                 const url = `https://www.triggercmd.com/api/run/triggerSave?computer=${COMPUTER}&trigger=${game.trigger}&token=${TOKEN}`;
                 
+                // Включаем визуал загрузки
                 this.classList.add('active-cooldown');
-                cooldownSeconds = 60;
-                updateButtonsState();
+                this.querySelector('.cooldown-spinner').style.display = 'block';
+                this.querySelector('.cooldown-time').innerText = '...';
 
-                fetch(url, { mode: 'no-cors' })
+                // Реальный запрос к серверу без no-cors
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('TriggerCMD вернул ошибку сервера');
+                        }
+                        return response.text();
+                    })
                     .then(() => {
+                        // Если сервер ответил успехом, запускаем таймер на 60 секунд
+                        this.querySelector('.cooldown-spinner').style.display = 'none';
+                        cooldownSeconds = 60;
+                        updateButtonsState();
+
                         const timerInterval = setInterval(() => {
                             cooldownSeconds--;
                             if (cooldownSeconds <= 0) {
@@ -266,10 +281,12 @@
                             updateButtonsState();
                         }, 1000);
                     })
-                    .catch(() => {
+                    .catch((error) => {
+                        // Если связи нет или команда не найдена в TriggerCMD
+                        this.classList.remove('active-cooldown');
                         cooldownSeconds = 0;
                         updateButtonsState();
-                        alert("Ошибка связи с сервером MALM PC.");
+                        alert("Ошибка запуска!\nВозможно, команда '" + game.trigger + "' еще не добавлена в TriggerCMD на компьютере, или ПК выключен.");
                     });
             };
             container.appendChild(item);
@@ -283,11 +300,11 @@
             if (navigator.onLine) {
                 statusDot.style.backgroundColor = '#32d74b';
                 statusDot.style.boxShadow = '0 0 10px rgba(50, 215, 75, 0.4)';
-                statusText.innerText = 'Соединение установлено';
+                statusText.innerText = 'Система готова';
             } else {
                 statusDot.style.backgroundColor = '#ff453a';
                 statusDot.style.boxShadow = '0 0 10px rgba(255, 69, 58, 0.4)';
-                statusText.innerText = 'Сбой подключения (оффлайн)';
+                statusText.innerText = 'Нет интернета';
             }
         }
 
