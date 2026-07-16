@@ -5,55 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MALM PC Control</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
         
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
-            background-color: #030303;
-            /* Едва заметный градиент для глубины черного */
-            background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #030303 70%);
+            background-color: #050507;
             color: #ffffff; 
             font-family: 'Inter', sans-serif; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             min-height: 100vh; 
             overflow: hidden;
+            position: relative;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Премиальная стеклянная панель без цвета */
+        /* Плавающие световые пятна для эффекта преломления в стекле */
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(70px);
+            z-index: 0;
+            opacity: 0.7;
+            animation: float 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+        .orb-1 {
+            width: 350px; height: 350px;
+            background: rgba(10, 132, 255, 0.4); /* Глубокий синий */
+            top: -50px; left: -100px;
+        }
+        .orb-2 {
+            width: 400px; height: 400px;
+            background: rgba(94, 92, 230, 0.35); /* Мягкий фиолетовый */
+            bottom: -100px; right: -100px;
+            animation-delay: -6s;
+            animation-direction: reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(40px, 40px) scale(1.1); }
+        }
+
+        /* Настоящее матовое стекло */
         .container { 
             width: 90%; 
             max-width: 420px; 
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
-            border-left: 1px solid rgba(255, 255, 255, 0.05);
-            border-right: 1px solid rgba(255, 255, 255, 0.02);
+            /* Градиент для имитации толщины и блика на поверхности */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+            
+            /* Главный эффект размытия (Glassmorphism) */
+            backdrop-filter: blur(24px) saturate(160%);
+            -webkit-backdrop-filter: blur(24px) saturate(160%);
+            
+            /* Имитация фаски стекла: светлый верхний левый край, темный нижний правый */
+            border-top: 1px solid rgba(255, 255, 255, 0.25);
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
             border-bottom: 1px solid rgba(255, 255, 255, 0.02);
             
-            border-radius: 32px; 
+            border-radius: 36px; 
             padding: 45px 30px; 
             text-align: center; 
             position: relative;
+            z-index: 10;
             
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+            /* Мягкая тень под стеклом */
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
         }
 
         h1 { 
-            font-size: 32px; font-weight: 800;
-            letter-spacing: 2px; 
+            font-size: 32px; font-weight: 700;
+            letter-spacing: 1px; 
             margin-bottom: 6px; 
-            color: #ffffff;
             text-transform: uppercase;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
         p.subtitle { 
-            color: #777777; 
-            font-size: 11px; 
-            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5); 
+            font-size: 12px; 
+            font-weight: 500;
             margin-bottom: 35px; 
             letter-spacing: 3px; 
             text-transform: uppercase;
@@ -62,7 +95,7 @@
         .section-title {
             font-size: 14px;
             font-weight: 400;
-            color: #aaaaaa;
+            color: rgba(255, 255, 255, 0.7);
             margin-bottom: 20px;
             letter-spacing: 0.5px;
         }
@@ -71,85 +104,83 @@
             display: flex; flex-direction: column; gap: 16px; 
         }
 
-        /* Полностью прозрачные ч/б кнопки */
+        /* Кнопки тоже стеклянные, но более тонкие */
         .btn { 
             display: flex; align-items: center; justify-content: center;
             width: 100%; padding: 18px; 
             
-            background: transparent;
+            background: rgba(0, 0, 0, 0.2);
             color: #ffffff; 
             
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px; 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px; 
             
             font-family: inherit; 
-            font-size: 16px; font-weight: 400; 
-            letter-spacing: 1px;
+            font-size: 17px; font-weight: 500; 
+            letter-spacing: 0.5px;
             cursor: pointer; 
             
-            transition: all 0.3s ease; 
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        /* Обесцвечиваем системные эмодзи для строгости */
         .btn span.icon { 
-            margin-right: 14px; font-size: 20px; 
-            filter: grayscale(100%) brightness(200%);
-            transition: filter 0.3s ease;
+            margin-right: 14px; font-size: 22px; 
+            /* Вернули цвета иконкам, добавили легкую тень */
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
         }
 
         .btn:hover:not(.disabled) { 
-            border-color: rgba(255, 255, 255, 0.4);
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
         .btn:active:not(.disabled) { 
-            transform: scale(0.97); 
-            background: #ffffff;
-            color: #000000;
-        }
-        .btn:active:not(.disabled) span.icon {
-            filter: grayscale(100%) brightness(0%);
+            transform: translateY(2px); 
+            background: rgba(0, 0, 0, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
         /* Состояние блокировки во время кулдауна */
         .btn.disabled {
-            border-color: rgba(255, 255, 255, 0.05);
-            color: #555555;
+            background: rgba(0, 0, 0, 0.1);
+            border-color: rgba(255, 255, 255, 0.03);
+            color: rgba(255, 255, 255, 0.3);
             cursor: not-allowed;
-            background: transparent;
+            box-shadow: none;
         }
         .btn.disabled span.icon {
-            filter: grayscale(100%) opacity(30%);
+            filter: grayscale(100%) opacity(40%);
         }
 
         .footer { 
             margin-top: 40px; 
-            font-size: 11px; font-weight: 600; color: #666666; 
+            font-size: 11px; font-weight: 600; 
+            color: rgba(255, 255, 255, 0.4); 
             display: flex; align-items: center; justify-content: center;
             letter-spacing: 1px;
             text-transform: uppercase;
         }
         
         #status-dot {
-            display: inline-block; width: 6px; height: 6px;
-            background-color: #ffffff; 
+            display: inline-block; width: 8px; height: 8px;
+            background-color: #32d74b; /* Насыщенный зеленый */
             border-radius: 50%;
             margin-right: 8px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 12px rgba(50, 215, 75, 0.6);
             transition: all 0.3s;
         }
-
-        /* Анимация пульсации для статуса */
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; box-shadow: 0 0 15px rgba(255,255,255,1); }
-            100% { opacity: 0.5; }
-        }
-        .active-pulse { animation: pulse 2s infinite; }
 
     </style>
 </head>
 <body>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
     <div class="container">
         <h1>MALM PC</h1>
         <p class="subtitle">MALM CHAIR NFC</p>
@@ -158,7 +189,7 @@
         <div id="buttons-container"></div>
 
         <div class="footer">
-            <span id="status-dot" class="active-pulse"></span>
+            <span id="status-dot"></span>
             <span id="status-text">СИСТЕМА ГОТОВА</span>
         </div>
     </div>
@@ -174,9 +205,8 @@
         ];
 
         const container = document.getElementById('buttons-container');
-        let cooldownSeconds = 0; // Глобальный таймер
+        let cooldownSeconds = 0;
 
-        // Функция обновления кнопок во время кулдауна
         function updateButtonsState() {
             const buttons = document.querySelectorAll('.btn');
             buttons.forEach(btn => {
@@ -184,7 +214,6 @@
                     btn.classList.add('disabled');
                 } else {
                     btn.classList.remove('disabled');
-                    // Возвращаем оригинальный текст, если таймер кончился
                     if (btn.dataset.originalHtml) {
                         btn.innerHTML = btn.dataset.originalHtml;
                     }
@@ -199,13 +228,11 @@
             btn.innerHTML = btn.dataset.originalHtml;
             
             btn.onclick = function() {
-                // Если нет интернета - блокируем нажатие
                 if (!navigator.onLine) {
                     alert("Ошибка: Нет подключения к интернету.");
                     return;
                 }
 
-                // Если идет таймер ограничения TriggerCMD - блокируем нажатие
                 if (cooldownSeconds > 0) return;
 
                 const url = `https://www.triggercmd.com/api/run/triggerSave?computer=${COMPUTER}&trigger=${game.trigger}&token=${TOKEN}`;
@@ -214,13 +241,11 @@
 
                 fetch(url, { mode: 'no-cors' })
                     .then(() => {
-                        // Успешно отправлено, запускаем минутный таймер
                         cooldownSeconds = 60;
                         updateButtonsState();
                         
                         this.innerHTML = `<span class="icon">✓</span> ЗАПУЩЕНО`;
                         
-                        // Каждую секунду обновляем счетчик
                         const timerInterval = setInterval(() => {
                             cooldownSeconds--;
                             if (cooldownSeconds > 0) {
@@ -241,20 +266,17 @@
             container.appendChild(btn);
         });
 
-        // ЛОГИКА ИНДИКАТОРА СЕТИ (Ч/Б СТИЛЬ)
         const statusDot = document.getElementById('status-dot');
         const statusText = document.getElementById('status-text');
 
         function updateNetworkStatus() {
             if (navigator.onLine) {
-                statusDot.style.backgroundColor = '#ffffff';
-                statusDot.style.boxShadow = '0 0 10px rgba(255,255,255,0.8)';
-                statusDot.classList.add('active-pulse');
+                statusDot.style.backgroundColor = '#32d74b';
+                statusDot.style.boxShadow = '0 0 12px rgba(50, 215, 75, 0.6)';
                 statusText.innerText = 'СИСТЕМА ГОТОВА';
             } else {
-                statusDot.style.backgroundColor = '#444444';
-                statusDot.style.boxShadow = 'none';
-                statusDot.classList.remove('active-pulse');
+                statusDot.style.backgroundColor = '#ff453a';
+                statusDot.style.boxShadow = '0 0 12px rgba(255, 69, 58, 0.6)';
                 statusText.innerText = 'СЕТЬ НЕДОСТУПНА';
             }
         }
