@@ -10,24 +10,56 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
-            background-color: #0e0e12;
+            background-color: #070709; /* Глубокий темный фон */
             color: #ffffff; 
             font-family: 'Inter', sans-serif; 
-            display: flex; flex-direction: column; align-items: center; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; /* Строго по центру вертикально */
+            align-items: center; 
             min-height: 100vh; 
-            padding: 40px 20px 50px 20px;
+            padding: 20px;
             -webkit-font-smoothing: antialiased;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        .container { 
-            width: 100%; 
-            max-width: 400px; 
-            display: flex;
-            flex-direction: column;
+        /* Неоновые сферы на фоне для эффекта стекла */
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.25;
+        }
+
+        .orb-1 {
+            width: 300px; height: 300px;
+            background: #0a84ff;
+            top: 10%; left: -20%;
+        }
+
+        .orb-2 {
+            width: 350px; height: 350px;
+            background: #ff453a;
+            bottom: 5%; right: -25%;
+        }
+
+        /* Стеклянная панель */
+        .glass-panel {
+            background: rgba(30, 30, 35, 0.35);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 36px;
+            padding: 40px 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
             position: relative;
         }
 
-        /* Страницы (переключение) */
+        /* Страницы */
         .page {
             display: none;
             width: 100%;
@@ -42,16 +74,16 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Идеально отцентрированная шапка через Grid */
+        /* Шапка */
         .header-row {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
             align-items: center;
             width: 100%;
-            margin-bottom: 40px;
+            margin-bottom: 35px;
         }
 
-        /* Левый блок (Системные кнопки) */
+        /* Системные кнопки */
         .sys-buttons {
             display: flex;
             gap: 12px;
@@ -78,7 +110,6 @@
 
         .sys-btn:active svg { transform: scale(0.85); }
 
-        /* Цвета системных иконок */
         #svg-lock { fill: #32d74b; } 
         #svg-sleep { fill: #ffffff; opacity: 0.7; }
         #svg-power { fill: #ffffff; opacity: 0.7; }
@@ -87,7 +118,7 @@
         .sys-btn.sleep-active #svg-sleep { fill: #ffd60a; opacity: 1; } 
         .sys-btn.power-off #svg-power { fill: #ff453a; opacity: 1; } 
 
-        /* Центральный блок (Текст) */
+        /* Название */
         .header-text {
             text-align: center;
         }
@@ -106,7 +137,7 @@
             font-weight: 500;
         }
 
-        /* Правый блок (Навигация) */
+        /* Кнопка навигации (Видеокарта / Домик) */
         .nav-buttons {
             display: flex;
             justify-content: flex-end;
@@ -126,7 +157,7 @@
         .nav-btn svg {
             width: 26px;
             height: 26px;
-            fill: #0a84ff; /* Синий цвет как у активных элементов */
+            fill: #0a84ff; 
             transition: transform 0.2s ease, fill 0.2s ease;
         }
 
@@ -135,12 +166,12 @@
             fill: #0066cc;
         }
 
-        /* Сетка ярлыков (Главная страница) */
+        /* Сетка игр */
         #games-grid { 
             display: flex; 
             flex-wrap: wrap;
             justify-content: center;
-            gap: 30px 15px; 
+            gap: 25px 15px; 
             width: 100%;
         }
 
@@ -162,7 +193,7 @@
             height: 72px;
             border-radius: 18px;
             margin-bottom: 10px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
             background-color: #1c1c22;
             transition: all 0.2s ease;
         }
@@ -203,7 +234,7 @@
 
         .shortcut-item:active:not(.disabled) .icon-wrapper { 
             transform: translateY(2px) scale(0.95); 
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
             filter: brightness(0.8);
         }
 
@@ -215,7 +246,7 @@
             filter: grayscale(100%);
         }
 
-        /* --- Стили для страницы Мониторинга --- */
+        /* Стили страницы мониторинга */
         .hw-grid {
             display: flex;
             flex-direction: column;
@@ -224,11 +255,10 @@
         }
 
         .hw-card {
-            background: #1c1c22;
-            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
             padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -251,36 +281,26 @@
             gap: 8px;
         }
 
-        .hw-model {
-            font-size: 12px;
-            color: #8e8e99;
-        }
-
-        .hw-stats {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
+        .hw-model { font-size: 12px; color: #8e8e99; }
+        .hw-stats { display: flex; justify-content: space-between; }
+        .stat-item { display: flex; flex-direction: column; gap: 4px; }
         .stat-label { font-size: 11px; color: #8e8e99; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-value { font-size: 18px; font-weight: 700; color: #fff; }
-        
         .temp-hot { color: #ff453a; }
         .temp-normal { color: #32d74b; }
         
     </style>
 </head>
 <body>
-    <div class="container">
+
+    <!-- Фоновые сферы -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
+    <!-- Главная стеклянная панель -->
+    <div class="glass-panel">
         
-        <!-- Шапка (Одинаковая для обеих страниц) -->
         <div class="header-row">
-            <!-- Лево: Системные кнопки -->
             <div class="sys-buttons">
                 <button class="sys-btn" id="btn-lock" onclick="runSystemCommand('sys_lock')">
                     <svg id="svg-lock" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -299,22 +319,18 @@
                 </button>
             </div>
             
-            <!-- Центр: Название -->
             <div class="header-text">
                 <h1>MALM PC</h1>
                 <h2 id="subtitle">Выберите что запустить</h2>
             </div>
 
-            <!-- Право: Кнопка навигации (переключается скриптом) -->
             <div class="nav-buttons">
-                <!-- Кнопка Видеокарты -->
+                <!-- Обновленная иконка Видеокарты (GPU) -->
                 <button class="nav-btn" id="btn-nav-hw" onclick="switchPage('hw')">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M2 5V19H22V5H2ZM20 17H4V7H20V17ZM6 9H18V15H6V9ZM8 11V13H10V11H8ZM11 11V13H13V11H11ZM14 11V13H16V11H14Z"/>
-                        <path d="M5 21H19V23H5V21Z"/>
+                    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M3 5C1.89543 5 1 5.89543 1 7V17C1 18.1046 1.89543 19 3 19H5V21H7V19H17V21H19V19H21C22.1046 19 23 18.1046 23 17V7C23 5.89543 22.1046 5 21 5H3ZM3 7H21V17H3V7ZM8 14C9.65685 14 11 12.6569 11 11C11 9.34315 9.65685 8 8 8C6.34315 8 5 9.34315 5 11C5 12.6569 6.34315 14 8 14ZM8 12.5C8.82843 12.5 9.5 11.8284 9.5 11C9.5 10.1716 8.82843 9.5 8 9.5C7.17157 9.5 6.5 10.1716 6.5 11C6.5 11.8284 7.17157 12.5 8 12.5ZM16 14C17.6569 14 19 12.6569 19 11C19 9.34315 17.6569 8 16 8C14.3431 8 13 9.34315 13 11C13 12.6569 14.3431 14 16 14ZM16 12.5C16.8284 12.5 17.5 11.8284 17.5 11C17.5 10.1716 16.8284 9.5 16 9.5C15.1716 9.5 14.5 10.1716 14.5 11C14.5 11.8284 15.1716 12.5 16 12.5Z"/>
                     </svg>
                 </button>
-                <!-- Кнопка Домика (изначально скрыта) -->
                 <button class="nav-btn" id="btn-nav-home" style="display: none;" onclick="switchPage('games')">
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 3L2 12H5V20H19V12H22L12 3ZM10 18V14H14V18H10Z"/>
@@ -323,15 +339,14 @@
             </div>
         </div>
         
-        <!-- СТРАНИЦА 1: ИГРЫ -->
+        <!-- Страница 1: Игры -->
         <div id="page-games" class="page active">
             <div id="games-grid"></div>
         </div>
 
-        <!-- СТРАНИЦА 2: МОНИТОРИНГ (ПОКА ЗАГЛУШКИ) -->
+        <!-- Страница 2: Мониторинг -->
         <div id="page-hw" class="page">
             <div class="hw-grid">
-                <!-- CPU Card -->
                 <div class="hw-card">
                     <div class="hw-header">
                         <div class="hw-title">⚙️ CPU</div>
@@ -353,7 +368,6 @@
                     </div>
                 </div>
 
-                <!-- GPU Card -->
                 <div class="hw-card">
                     <div class="hw-header">
                         <div class="hw-title">🎮 GPU</div>
@@ -375,7 +389,6 @@
                     </div>
                 </div>
 
-                <!-- RAM Card -->
                 <div class="hw-card">
                     <div class="hw-header">
                         <div class="hw-title">💾 ОЗУ</div>
@@ -392,7 +405,6 @@
                         </div>
                     </div>
                 </div>
-                
             </div>
         </div>
 
@@ -402,7 +414,6 @@
         const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTc4YTg0NTEyY2Q5MDAxMzBlYWM2NSIsImlhdCI6MTc4NDEyNDkwNX0.83vjT_TzTttLnkXVDOUESncUMaVQkuejm4F0KmQEuVY";
         const COMPUTER = "MALM%20PC";
 
-        // Логика переключения страниц
         function switchPage(page) {
             const pageGames = document.getElementById('page-games');
             const pageHw = document.getElementById('page-hw');
@@ -425,7 +436,6 @@
             }
         }
 
-        // Системные команды
         function runSystemCommand(triggerName) {
             const pass = prompt("Системная команда.\nВведите пароль для подтверждения:");
             if (pass !== "200208") {
@@ -450,7 +460,6 @@
                 });
         }
 
-        // Рендер игр
         const gamesList = [
             { name: "Fortnite", trigger: "fortnite", img: "fn.png" },
             { name: "Counter-Strike 2", trigger: "cs", img: "cs2.png" },
