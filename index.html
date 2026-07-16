@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MALM PC Control</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #121212; color: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        .container { width: 100%; max-width: 400px; background: #1e1e1e; border-radius: 16px; padding: 30px 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); text-align: center; }
+        h1 { font-size: 24px; margin-bottom: 5px; letter-spacing: 2px; text-transform: uppercase; background: linear-gradient(90deg, #ff416c, #ff4b2b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        p.subtitle { color: #888; font-size: 14px; margin-bottom: 30px; }
+        .btn { display: block; width: 100%; padding: 16px; margin-bottom: 15px; background: #2a2a2a; color: #fff; border: 2px solid #333; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn:hover, .btn:active { background: #3a3a3a; border-color: #ff4b2b; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 75, 43, 0.2); }
+        .btn span { margin-right: 10px; font-size: 20px; }
+        .footer { margin-top: 20px; font-size: 12px; color: #555; }
+        #buttons-container { display: flex; flex-direction: column; gap: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MALM PC</h1>
+        <p class="subtitle">NFC Control Panel</p>
+        
+        <!-- Кнопки будут генерироваться сюда автоматически -->
+        <div id="buttons-container"></div>
+
+        <div class="footer">NFC Tag Authorized</div>
+    </div>
+
+    <script>
+        // 1. Твои данные для подключения
+        const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTc4YTg0NTEyY2Q5MDAxMzBlYWM2NSIsImlhdCI6MTc4NDEyNDkwNX0.83vjT_TzTttLnkXVDOUESncUMaVQkuejm4F0KmQEuVY";
+        const COMPUTER = "MALM%20PC";
+
+        // 2. СПИСОК ИГР И ПРОГРАММ (ПРОСТО ДОБАВЛЯЙ СЮДА НОВЫЕ СТРОКИ)
+        const gamesList = [
+            { name: "Fortnite", icon: "🎮", trigger: "fortnite" },
+            { name: "Counter-Strike", icon: "🔫", trigger: "cs" },
+            { name: "База Данных", icon: "🗄", trigger: "db" },
+            // Пример добавления новой кнопки:
+            // { name: "GTA 5 RP", icon: "🚗", trigger: "gta" }
+        ];
+
+        // 3. Логика генерации кнопок и отправки команд
+        const container = document.getElementById('buttons-container');
+
+        gamesList.forEach(game => {
+            const btn = document.createElement('button');
+            btn.className = 'btn';
+            btn.innerHTML = `<span>${game.icon}</span> ${game.name}`;
+            
+            btn.onclick = function() {
+                const url = `https://www.triggercmd.com/api/run/triggerSave?computer=${COMPUTER}&trigger=${game.trigger}&token=${TOKEN}`;
+                
+                const originalText = this.innerHTML;
+                this.innerHTML = '<span>⏳</span> Запуск...';
+                this.style.borderColor = '#ff4b2b';
+
+                fetch(url, { mode: 'no-cors' })
+                    .then(() => {
+                        setTimeout(() => {
+                            this.innerHTML = '<span>✅</span> Запущено!';
+                            setTimeout(() => {
+                                this.innerHTML = originalText;
+                                this.style.borderColor = '#333';
+                            }, 2000);
+                        }, 500);
+                    })
+                    .catch(() => {
+                        alert('Ошибка соединения с ПК');
+                        this.innerHTML = originalText;
+                    });
+            };
+            container.appendChild(btn);
+        });
+    </script>
+</body>
+</html>
