@@ -46,7 +46,7 @@
             font-weight: 500;
         }
 
-        /* Сетка ярлыков (как на рабочем столе) */
+        /* Сетка ярлыков */
         #games-grid { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
@@ -67,7 +67,7 @@
             transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        /* Сама иконка (квадрат с закруглениями) */
+        /* Иконка */
         .icon-wrapper {
             position: relative;
             width: 72px;
@@ -86,7 +86,7 @@
             object-fit: cover;
         }
 
-        /* Затемнение и таймер поверх иконки при запуске */
+        /* Затемнение и таймер поверх иконки */
         .cooldown-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -125,7 +125,7 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        /* Эффекты наведения и нажатия */
+        /* Эффекты */
         .shortcut-item:hover:not(.disabled) .icon-wrapper { 
             transform: translateY(-4px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
@@ -140,7 +140,7 @@
             filter: brightness(0.8);
         }
 
-        /* Состояние блокировки */
+        /* Блокировка */
         .shortcut-item.disabled {
             cursor: not-allowed;
         }
@@ -149,12 +149,10 @@
             box-shadow: none;
         }
 
-        /* Показываем таймер только на активной/нажатой иконке */
         .shortcut-item.active-cooldown .cooldown-overlay {
             display: flex;
         }
         
-        /* Остальные иконки просто тускнеют */
         .shortcut-item.disabled:not(.active-cooldown) .icon-wrapper {
             opacity: 0.4;
             filter: grayscale(100%);
@@ -199,15 +197,15 @@
         const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTc4YTg0NTEyY2Q5MDAxMzBlYWM2NSIsImlhdCI6MTc4NDEyNDkwNX0.83vjT_TzTttLnkXVDOUESncUMaVQkuejm4F0KmQEuVY";
         const COMPUTER = "MALM%20PC";
 
-        // Если захочешь поставить свои картинки - просто загрузи их на GitHub 
-        // и поменяй ссылку в поле img на "fortnite.png" и т.д.
         const gamesList = [
             { name: "Fortnite", trigger: "fortnite", img: "https://ui-avatars.com/api/?name=FN&background=1a1a1d&color=fff&size=200&font-size=0.4&bold=true" },
             { name: "Counter-Strike 2", trigger: "cs", img: "https://ui-avatars.com/api/?name=CS&background=d97706&color=fff&size=200&font-size=0.4&bold=true" },
             { name: "Rust", trigger: "rust", img: "https://ui-avatars.com/api/?name=RU&background=dc2626&color=fff&size=200&font-size=0.4&bold=true" },
             { name: "Arma Reforger", trigger: "arma", img: "https://ui-avatars.com/api/?name=AR&background=4b5563&color=fff&size=200&font-size=0.4&bold=true" },
             { name: "The Finals", trigger: "finals", img: "https://ui-avatars.com/api/?name=TF&background=ca8a04&color=fff&size=200&font-size=0.4&bold=true" },
-            { name: "Foxhole", trigger: "foxhole", img: "https://ui-avatars.com/api/?name=FH&background=374151&color=fff&size=200&font-size=0.4&bold=true" }
+            { name: "Foxhole", trigger: "foxhole", img: "https://ui-avatars.com/api/?name=FH&background=374151&color=fff&size=200&font-size=0.4&bold=true" },
+            { name: "Euro Truck Sim 2", trigger: "ets2", img: "https://ui-avatars.com/api/?name=ET&background=2563eb&color=fff&size=200&font-size=0.4&bold=true" },
+            { name: "ARC Raiders", trigger: "arc", img: "https://ui-avatars.com/api/?name=AC&background=0891b2&color=fff&size=200&font-size=0.4&bold=true" }
         ];
 
         const container = document.getElementById('games-grid');
