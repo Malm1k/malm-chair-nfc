@@ -5,36 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MALM PC Control</title>
     <style>
-        /* Имитация фирменного шрифта Apple (San Francisco) */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
-            /* Глубокий темный фон в стиле iOS абстракций */
-            background-color: #000000;
+            background-color: #050505;
             background-image: 
-                radial-gradient(at 0% 0%, rgba(67, 30, 104, 0.5) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(13, 56, 120, 0.5) 0px, transparent 50%),
-                radial-gradient(at 50% 100%, rgba(10, 48, 85, 0.5) 0px, transparent 50%);
+                radial-gradient(circle at 15% 50%, rgba(40, 20, 60, 0.4), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(15, 40, 80, 0.4), transparent 25%);
             color: #f5f5f7; 
-            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            min-height: 100vh; overflow: hidden;
+            min-height: 100vh; 
             -webkit-font-smoothing: antialiased;
         }
 
         .container { 
-            width: 92%; max-width: 400px; 
-            /* Эффект матового стекла (iOS Glassmorphism) */
-            background: rgba(30, 30, 32, 0.65); 
-            backdrop-filter: blur(40px) saturate(200%);
-            -webkit-backdrop-filter: blur(40px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 90%; 
+            max-width: 400px; /* Базовый размер для телефона */
+            background: rgba(28, 28, 30, 0.5); 
+            backdrop-filter: blur(50px) saturate(200%);
+            -webkit-backdrop-filter: blur(50px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 36px; 
             padding: 40px 24px; 
             text-align: center; 
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            /* Сложная тень для эффекта объема */
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 20px 40px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
         }
 
         h1 { 
@@ -59,41 +58,49 @@
         .btn { 
             display: flex; align-items: center; justify-content: center;
             width: 100%; padding: 18px; 
-            background: rgba(255, 255, 255, 0.08); 
+            background: rgba(255, 255, 255, 0.05); 
             color: #ffffff; 
-            border: none; 
+            border: 1px solid rgba(255, 255, 255, 0.03); 
             border-radius: 20px; 
             font-family: inherit; 
             font-size: 17px; font-weight: 600; 
-            letter-spacing: -0.2px;
             cursor: pointer; 
             transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); 
         }
 
-        .btn span.icon { 
-            margin-right: 12px; font-size: 22px; 
-        }
+        .btn span.icon { margin-right: 12px; font-size: 22px; }
 
-        /* Анимация нажатия в стиле iOS */
-        .btn:active { 
-            transform: scale(0.96); 
-            background: rgba(255, 255, 255, 0.12); 
-        }
+        .btn:hover { background: rgba(255, 255, 255, 0.09); }
+        .btn:active { transform: scale(0.96); background: rgba(255, 255, 255, 0.12); }
 
         .footer { 
             margin-top: 35px; 
-            font-size: 13px; 
-            font-weight: 500;
-            color: #6e6e73; 
+            font-size: 13px; font-weight: 500; color: #6e6e73; 
+            display: flex; align-items: center; justify-content: center;
         }
         
-        .footer span {
-            display: inline-block;
-            width: 8px; height: 8px;
-            background-color: #34c759;
-            border-radius: 50%;
-            margin-right: 6px;
+        #status-dot {
+            display: inline-block; width: 8px; height: 8px;
+            background-color: #34c759; border-radius: 50%;
+            margin-right: 8px;
             box-shadow: 0 0 8px rgba(52, 199, 89, 0.6);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* АДАПТИВНОСТЬ ДЛЯ ПК И ПЛАНШЕТОВ */
+        @media (min-width: 768px) {
+            body { background-size: cover; }
+            .container { 
+                max-width: 650px; /* Расширяем панель на ПК */
+                padding: 60px 50px; 
+                border-radius: 48px;
+            }
+            h1 { font-size: 42px; margin-bottom: 8px; }
+            p.subtitle { font-size: 16px; margin-bottom: 45px; }
+            #buttons-container { gap: 20px; }
+            .btn { padding: 24px; font-size: 20px; border-radius: 24px; }
+            .btn span.icon { font-size: 28px; margin-right: 16px; }
+            .footer { margin-top: 45px; font-size: 15px; }
         }
     </style>
 </head>
@@ -104,22 +111,22 @@
         
         <div id="buttons-container"></div>
 
-        <div class="footer"><span></span>Система активна</div>
+        <div class="footer">
+            <span id="status-dot"></span>
+            <span id="status-text">Система готова</span>
+        </div>
     </div>
 
     <script>
-        // 1. Твои данные для подключения
         const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTc4YTg0NTEyY2Q5MDAxMzBlYWM2NSIsImlhdCI6MTc4NDEyNDkwNX0.83vjT_TzTttLnkXVDOUESncUMaVQkuejm4F0KmQEuVY";
         const COMPUTER = "MALM%20PC";
 
-        // 2. СПИСОК ИГР (Базу данных убрали, добавили Foxhole)
         const gamesList = [
             { name: "Fortnite", icon: "🎮", trigger: "fortnite" },
             { name: "Counter-Strike", icon: "🔫", trigger: "cs" },
             { name: "Foxhole", icon: "🪖", trigger: "foxhole" }
         ];
 
-        // 3. Логика генерации кнопок
         const container = document.getElementById('buttons-container');
 
         gamesList.forEach(game => {
@@ -131,30 +138,53 @@
                 const url = `https://www.triggercmd.com/api/run/triggerSave?computer=${COMPUTER}&trigger=${game.trigger}&token=${TOKEN}`;
                 
                 const originalText = this.innerHTML;
-                // Анимация в стиле iOS (синий цвет акцента)
                 this.innerHTML = `<span class="icon">⚙️</span> Запуск...`;
                 this.style.color = '#0a84ff';
+                this.style.borderColor = 'rgba(10, 132, 255, 0.4)';
 
                 fetch(url, { mode: 'no-cors' })
                     .then(() => {
                         setTimeout(() => {
-                            this.innerHTML = `<span class="icon">✅</span> Готово`;
-                            this.style.color = '#34c759'; // Системный зеленый iOS
+                            this.innerHTML = `<span class="icon">✅</span> Отправлено`;
+                            this.style.color = '#34c759'; 
+                            this.style.borderColor = 'rgba(52, 199, 89, 0.4)';
                             
                             setTimeout(() => {
                                 this.innerHTML = originalText;
                                 this.style.color = '#ffffff';
+                                this.style.borderColor = 'rgba(255, 255, 255, 0.03)';
                             }, 1500);
                         }, 400);
                     })
                     .catch(() => {
-                        alert('Сбой подключения к ПК');
+                        alert('Сбой отправки команды');
                         this.innerHTML = originalText;
                         this.style.color = '#ffffff';
+                        this.style.borderColor = 'rgba(255, 255, 255, 0.03)';
                     });
             };
             container.appendChild(btn);
         });
+
+        // ЛОГИКА ИНДИКАТОРА СЕТИ
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+
+        function updateNetworkStatus() {
+            if (navigator.onLine) {
+                statusDot.style.backgroundColor = '#34c759';
+                statusDot.style.boxShadow = '0 0 8px rgba(52, 199, 89, 0.6)';
+                statusText.innerText = 'Связь установлена';
+            } else {
+                statusDot.style.backgroundColor = '#ff3b30';
+                statusDot.style.boxShadow = '0 0 8px rgba(255, 59, 48, 0.6)';
+                statusText.innerText = 'Нет подключения к сети';
+            }
+        }
+
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+        updateNetworkStatus();
     </script>
 </body>
 </html>
