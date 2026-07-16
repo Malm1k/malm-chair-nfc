@@ -15,115 +15,160 @@
             font-family: 'Inter', sans-serif; 
             display: flex; flex-direction: column; align-items: center; 
             min-height: 100vh; 
-            padding: 40px 20px;
+            padding: 50px 20px;
             -webkit-font-smoothing: antialiased;
         }
 
         .container { 
             width: 100%; 
-            max-width: 480px; 
+            max-width: 400px; 
             display: flex;
             flex-direction: column;
         }
 
-        /* Приветливая шапка */
+        /* Шапка */
         .header {
-            margin-bottom: 25px;
-            text-align: left;
+            margin-bottom: 35px;
+            text-align: center;
         }
 
         h1 { 
-            font-size: 20px; 
+            font-size: 24px; 
             font-weight: 700;
             color: #ffffff;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
         }
 
         h2 { 
-            color: #9494a0; 
-            font-size: 15px; 
+            color: #8e8e99; 
+            font-size: 14px; 
             font-weight: 500;
         }
 
-        /* Список игр */
-        #games-container { 
-            display: flex; flex-direction: column; gap: 12px; 
+        /* Сетка ярлыков (как на рабочем столе) */
+        #games-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 30px 15px; 
+            justify-items: center;
         }
 
-        /* Карточка игры (User Friendly дизайн) */
-        .game-card { 
-            display: flex; align-items: center;
-            width: 100%; 
-            padding: 12px; 
-            background: #18181d;
-            border: 1px solid #282830; 
-            border-radius: 16px; 
-            cursor: pointer; 
-            transition: all 0.2s ease;
-            text-align: left;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        /* Постер игры */
-        .game-cover {
-            width: 80px;
-            height: 40px;
-            border-radius: 8px;
-            object-fit: cover;
-            margin-right: 16px;
-            background-color: #000;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-
-        .game-info {
-            flex-grow: 1;
+        /* Контейнер одного ярлыка */
+        .shortcut-item {
             display: flex;
             flex-direction: column;
+            align-items: center;
+            width: 100%;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            outline: none;
+            transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* Сама иконка (квадрат с закруглениями) */
+        .icon-wrapper {
+            position: relative;
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            background-color: #1c1c22;
+            transition: all 0.2s ease;
+        }
+
+        .icon-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 18px;
+            object-fit: cover;
+        }
+
+        /* Затемнение и таймер поверх иконки при запуске */
+        .cooldown-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 18px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
+            backdrop-filter: blur(2px);
         }
 
-        .game-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: #e2e2e8;
+        .cooldown-spinner {
+            font-size: 18px;
             margin-bottom: 2px;
+            animation: spin 2s linear infinite;
         }
 
-        .game-status {
+        .cooldown-time {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Текст под иконкой */
+        .shortcut-name {
             font-size: 12px;
-            color: #6c6c77;
             font-weight: 500;
-            transition: color 0.3s;
+            color: #d1d1d6;
+            text-align: center;
+            line-height: 1.2;
+            max-width: 80px;
+            word-wrap: break-word;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        /* Эффекты наведения */
-        .game-card:hover:not(.disabled) { 
-            background: #202026;
-            border-color: #383844;
-            transform: translateY(-2px);
+        /* Эффекты наведения и нажатия */
+        .shortcut-item:hover:not(.disabled) .icon-wrapper { 
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+        .shortcut-item:hover:not(.disabled) .shortcut-name {
+            color: #ffffff;
         }
 
-        .game-card:active:not(.disabled) { 
-            transform: translateY(0) scale(0.98); 
-            background: #2a2a32;
+        .shortcut-item:active:not(.disabled) .icon-wrapper { 
+            transform: translateY(2px) scale(0.95); 
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            filter: brightness(0.8);
         }
 
-        /* Состояние блокировки во время кулдауна */
-        .game-card.disabled {
-            opacity: 0.5;
+        /* Состояние блокировки */
+        .shortcut-item.disabled {
             cursor: not-allowed;
-            filter: grayscale(80%);
+        }
+        
+        .shortcut-item.disabled .icon-wrapper {
+            box-shadow: none;
         }
 
-        /* Подвал со статусом системы */
+        /* Показываем таймер только на активной/нажатой иконке */
+        .shortcut-item.active-cooldown .cooldown-overlay {
+            display: flex;
+        }
+        
+        /* Остальные иконки просто тускнеют */
+        .shortcut-item.disabled:not(.active-cooldown) .icon-wrapper {
+            opacity: 0.4;
+            filter: grayscale(100%);
+        }
+
+        /* Подвал */
         .footer { 
-            margin-top: 40px; 
-            padding-top: 20px;
-            border-top: 1px solid #282830;
+            margin-top: 50px; 
+            padding-top: 25px;
+            border-top: 1px solid rgba(255,255,255,0.05);
             font-size: 12px; 
             font-weight: 500; 
             color: #6c6c77; 
-            display: flex; align-items: center; 
+            display: flex; align-items: center; justify-content: center;
         }
         
         #status-dot {
@@ -142,11 +187,11 @@
             <h2>Выберите что запустить</h2>
         </div>
         
-        <div id="games-container"></div>
+        <div id="games-grid"></div>
 
         <div class="footer">
             <span id="status-dot"></span>
-            <span id="status-text">Соединение установлено</span>
+            <span id="status-text">Система готова</span>
         </div>
     </div>
 
@@ -154,81 +199,52 @@
         const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTc4YTg0NTEyY2Q5MDAxMzBlYWM2NSIsImlhdCI6MTc4NDEyNDkwNX0.83vjT_TzTttLnkXVDOUESncUMaVQkuejm4F0KmQEuVY";
         const COMPUTER = "MALM%20PC";
 
-        // Массив игр с постерами (картинки берутся напрямую из базы Steam, а Фортнайт из Википедии)
+        // Если захочешь поставить свои картинки - просто загрузи их на GitHub 
+        // и поменяй ссылку в поле img на "fortnite.png" и т.д.
         const gamesList = [
-            { 
-                name: "Fortnite", 
-                trigger: "fortnite", 
-                img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/FortniteLogo.svg/512px-FortniteLogo.svg.png" 
-            },
-            { 
-                name: "Counter-Strike 2", 
-                trigger: "cs", 
-                img: "https://cdn.akamai.steamstatic.com/steam/apps/730/capsule_231x87.jpg" 
-            },
-            { 
-                name: "Rust", 
-                trigger: "rust", 
-                img: "https://cdn.akamai.steamstatic.com/steam/apps/252490/capsule_231x87.jpg" 
-            },
-            { 
-                name: "Arma Reforger", 
-                trigger: "arma", 
-                img: "https://cdn.akamai.steamstatic.com/steam/apps/1874880/capsule_231x87.jpg" 
-            },
-            { 
-                name: "The Finals", 
-                trigger: "finals", 
-                img: "https://cdn.akamai.steamstatic.com/steam/apps/2073850/capsule_231x87.jpg" 
-            },
-            { 
-                name: "Foxhole", 
-                trigger: "foxhole", 
-                img: "https://cdn.akamai.steamstatic.com/steam/apps/505460/capsule_231x87.jpg" 
-            }
+            { name: "Fortnite", trigger: "fortnite", img: "https://ui-avatars.com/api/?name=FN&background=1a1a1d&color=fff&size=200&font-size=0.4&bold=true" },
+            { name: "Counter-Strike 2", trigger: "cs", img: "https://ui-avatars.com/api/?name=CS&background=d97706&color=fff&size=200&font-size=0.4&bold=true" },
+            { name: "Rust", trigger: "rust", img: "https://ui-avatars.com/api/?name=RU&background=dc2626&color=fff&size=200&font-size=0.4&bold=true" },
+            { name: "Arma Reforger", trigger: "arma", img: "https://ui-avatars.com/api/?name=AR&background=4b5563&color=fff&size=200&font-size=0.4&bold=true" },
+            { name: "The Finals", trigger: "finals", img: "https://ui-avatars.com/api/?name=TF&background=ca8a04&color=fff&size=200&font-size=0.4&bold=true" },
+            { name: "Foxhole", trigger: "foxhole", img: "https://ui-avatars.com/api/?name=FH&background=374151&color=fff&size=200&font-size=0.4&bold=true" }
         ];
 
-        const container = document.getElementById('games-container');
+        const container = document.getElementById('games-grid');
         let cooldownSeconds = 0;
 
-        // Обновление состояния кнопок
         function updateButtonsState() {
-            const cards = document.querySelectorAll('.game-card');
-            cards.forEach(card => {
-                const statusLabel = card.querySelector('.game-status');
+            const items = document.querySelectorAll('.shortcut-item');
+            items.forEach(item => {
+                const timeLabel = item.querySelector('.cooldown-time');
                 if (cooldownSeconds > 0) {
-                    card.classList.add('disabled');
-                    // Если эта кнопка была нажата, показываем таймер, остальным - ожидание
-                    if (card.dataset.active === "true") {
-                        statusLabel.innerText = `Запущено (откат ${cooldownSeconds}с)`;
-                        statusLabel.style.color = "#32d74b";
-                    } else {
-                        statusLabel.innerText = "Ожидание...";
+                    item.classList.add('disabled');
+                    if (item.classList.contains('active-cooldown')) {
+                        timeLabel.innerText = cooldownSeconds;
                     }
                 } else {
-                    card.classList.remove('disabled');
-                    card.dataset.active = "false";
-                    statusLabel.innerText = "Коснитесь для запуска";
-                    statusLabel.style.color = "#6c6c77";
+                    item.classList.remove('disabled');
+                    item.classList.remove('active-cooldown');
                 }
             });
         }
 
-        // Генерация карточек игр
         gamesList.forEach(game => {
-            const card = document.createElement('div');
-            card.className = 'game-card';
-            card.dataset.active = "false";
+            const item = document.createElement('div');
+            item.className = 'shortcut-item';
             
-            card.innerHTML = `
-                <img class="game-cover" src="${game.img}" alt="${game.name}">
-                <div class="game-info">
-                    <div class="game-name">${game.name}</div>
-                    <div class="game-status">Коснитесь для запуска</div>
+            item.innerHTML = `
+                <div class="icon-wrapper">
+                    <img class="icon-img" src="${game.img}" alt="${game.name}">
+                    <div class="cooldown-overlay">
+                        <div class="cooldown-spinner">⚙️</div>
+                        <div class="cooldown-time">60</div>
+                    </div>
                 </div>
+                <div class="shortcut-name">${game.name}</div>
             `;
             
-            card.onclick = function() {
+            item.onclick = function() {
                 if (!navigator.onLine) {
                     alert("Отсутствует подключение к сети.");
                     return;
@@ -237,17 +253,13 @@
                 if (cooldownSeconds > 0) return;
 
                 const url = `https://www.triggercmd.com/api/run/triggerSave?computer=${COMPUTER}&trigger=${game.trigger}&token=${TOKEN}`;
-                const statusLabel = this.querySelector('.game-status');
                 
-                this.dataset.active = "true";
-                statusLabel.innerText = "Отправка команды...";
-                statusLabel.style.color = "#0a84ff"; // Синий цвет загрузки
+                this.classList.add('active-cooldown');
+                cooldownSeconds = 60;
+                updateButtonsState();
 
                 fetch(url, { mode: 'no-cors' })
                     .then(() => {
-                        cooldownSeconds = 60; // Запуск минутного кулдауна
-                        updateButtonsState();
-                        
                         const timerInterval = setInterval(() => {
                             cooldownSeconds--;
                             if (cooldownSeconds <= 0) {
@@ -257,21 +269,15 @@
                         }, 1000);
                     })
                     .catch(() => {
-                        this.dataset.active = "false";
-                        statusLabel.innerText = "Ошибка запуска";
-                        statusLabel.style.color = "#ff453a";
-                        setTimeout(() => {
-                            if (cooldownSeconds <= 0) {
-                                statusLabel.innerText = "Коснитесь для запуска";
-                                statusLabel.style.color = "#6c6c77";
-                            }
-                        }, 2000);
+                        cooldownSeconds = 0;
+                        updateButtonsState();
+                        alert("Ошибка связи с сервером MALM PC.");
                     });
             };
-            container.appendChild(card);
+            container.appendChild(item);
         });
 
-        // Логика индикатора сети
+        // Статус сети
         const statusDot = document.getElementById('status-dot');
         const statusText = document.getElementById('status-text');
 
