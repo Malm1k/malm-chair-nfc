@@ -24,70 +24,79 @@
             max-width: 400px; 
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
-        /* Новая шапка (кнопки слева, текст справа) */
-        .header-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 35px;
+        /* Страницы (переключение) */
+        .page {
+            display: none;
             width: 100%;
+            animation: fadeIn 0.3s ease;
+        }
+        .page.active {
+            display: block;
         }
 
-        /* Группа системных кнопок */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Идеально отцентрированная шапка через Grid */
+        .header-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        /* Левый блок (Системные кнопки) */
         .sys-buttons {
             display: flex;
-            gap: 8px;
-            padding-right: 15px;
-            border-right: 1px solid rgba(255,255,255,0.1);
+            gap: 12px;
+            justify-content: flex-start;
         }
 
         .sys-btn {
-            background: #1c1c22;
-            border: 1px solid rgba(255,255,255,0.05);
+            background: transparent;
+            border: none;
             cursor: pointer;
             outline: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
+            padding: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         .sys-btn svg {
-            width: 18px;
-            height: 18px;
-            transition: fill 0.3s ease;
+            width: 22px;
+            height: 22px;
+            transition: fill 0.3s ease, transform 0.2s ease;
         }
 
-        .sys-btn:hover { background: #2a2a32; transform: translateY(-2px); }
-        .sys-btn:active { transform: translateY(0) scale(0.92); }
+        .sys-btn:active svg { transform: scale(0.85); }
 
-        /* Цвета иконок по умолчанию */
-        #svg-lock { fill: #32d74b; } /* Зеленый разблокировано */
-        #svg-sleep { fill: #ffffff; }
-        #svg-power { fill: #ffffff; }
+        /* Цвета системных иконок */
+        #svg-lock { fill: #32d74b; } 
+        #svg-sleep { fill: #ffffff; opacity: 0.7; }
+        #svg-power { fill: #ffffff; opacity: 0.7; }
 
-        /* Цвета иконок при активации */
-        .sys-btn.locked #svg-lock { fill: #ff453a; } /* Красный заблокировано */
-        .sys-btn.sleep-active #svg-sleep { fill: #ffd60a; } /* Желтый сон */
-        .sys-btn.power-off #svg-power { fill: #ff453a; } /* Красный выключение */
+        .sys-btn.locked #svg-lock { fill: #ff453a; } 
+        .sys-btn.sleep-active #svg-sleep { fill: #ffd60a; opacity: 1; } 
+        .sys-btn.power-off #svg-power { fill: #ff453a; opacity: 1; } 
 
-        /* Текст шапки */
+        /* Центральный блок (Текст) */
         .header-text {
-            text-align: left;
+            text-align: center;
         }
 
         h1 { 
             font-size: 22px; 
             font-weight: 700;
             color: #ffffff;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             letter-spacing: 1px;
         }
 
@@ -97,7 +106,36 @@
             font-weight: 500;
         }
 
-        /* Сетка ярлыков */
+        /* Правый блок (Навигация) */
+        .nav-buttons {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn svg {
+            width: 26px;
+            height: 26px;
+            fill: #0a84ff; /* Синий цвет как у активных элементов */
+            transition: transform 0.2s ease, fill 0.2s ease;
+        }
+
+        .nav-btn:active svg {
+            transform: scale(0.85);
+            fill: #0066cc;
+        }
+
+        /* Сетка ярлыков (Главная страница) */
         #games-grid { 
             display: flex; 
             flex-wrap: wrap;
@@ -148,17 +186,8 @@
             backdrop-filter: blur(2px);
         }
 
-        .cooldown-spinner {
-            font-size: 18px;
-            margin-bottom: 2px;
-            animation: spin 2s linear infinite;
-        }
-
-        .cooldown-time {
-            font-size: 16px;
-            font-weight: 700;
-            color: #fff;
-        }
+        .cooldown-spinner { font-size: 18px; margin-bottom: 2px; animation: spin 2s linear infinite; }
+        .cooldown-time { font-size: 16px; font-weight: 700; color: #fff; }
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
@@ -170,16 +199,8 @@
             line-height: 1.2;
             max-width: 90px;
             word-wrap: break-word;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        .shortcut-item:hover:not(.disabled) .icon-wrapper { 
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-        }
-        .shortcut-item:hover:not(.disabled) .shortcut-name {
-            color: #ffffff;
-        }
         .shortcut-item:active:not(.disabled) .icon-wrapper { 
             transform: translateY(2px) scale(0.95); 
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
@@ -194,45 +215,83 @@
             filter: grayscale(100%);
         }
 
-        /* Подвал */
-        .footer { 
-            margin-top: 50px; 
-            padding-top: 25px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            font-size: 12px; 
-            font-weight: 500; 
-            color: #6c6c77; 
-            display: flex; align-items: center; justify-content: center;
+        /* --- Стили для страницы Мониторинга --- */
+        .hw-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
         }
+
+        .hw-card {
+            background: #1c1c22;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .hw-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 10px;
+        }
+
+        .hw-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hw-model {
+            font-size: 12px;
+            color: #8e8e99;
+        }
+
+        .hw-stats {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-label { font-size: 11px; color: #8e8e99; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { font-size: 18px; font-weight: 700; color: #fff; }
         
-        #status-dot {
-            display: inline-block; width: 8px; height: 8px;
-            background-color: #32d74b; 
-            border-radius: 50%;
-            margin-right: 8px;
-            box-shadow: 0 0 10px rgba(50, 215, 75, 0.4);
-        }
+        .temp-hot { color: #ff453a; }
+        .temp-normal { color: #32d74b; }
+        
     </style>
 </head>
 <body>
     <div class="container">
         
-        <!-- Новая шапка -->
+        <!-- Шапка (Одинаковая для обеих страниц) -->
         <div class="header-row">
+            <!-- Лево: Системные кнопки -->
             <div class="sys-buttons">
-                <!-- Кнопка Блокировки -->
                 <button class="sys-btn" id="btn-lock" onclick="runSystemCommand('sys_lock')">
                     <svg id="svg-lock" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 2C9.243 2 7 4.243 7 7V10H6C4.897 10 4 10.897 4 12V20C4 21.103 4.897 22 6 22H18C19.103 22 20 21.103 20 20V12C20 10.897 19.103 10 18 10H17V7C17 4.243 14.757 2 12 2ZM9 7C9 5.346 10.346 4 12 4C13.654 4 15 5.346 15 7V10H9V7ZM12 18C10.895 18 10 17.105 10 16C10 14.895 10.895 14 12 14C13.105 14 14 14.895 14 16C14 17.105 13.105 18 12 18Z"/>
                     </svg>
                 </button>
-                <!-- Кнопка Сна -->
                 <button class="sys-btn" id="btn-sleep" onclick="runSystemCommand('sys_sleep')">
                     <svg id="svg-sleep" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M20.368 13.568C19.539 13.843 18.663 14 17.75 14C12.918 14 9 10.082 9 5.25C9 4.337 9.157 3.461 9.432 2.632C5.748 3.654 3 7.126 3 11.25C3 16.082 6.918 20 11.75 20C15.874 20 19.346 17.252 20.368 13.568Z"/>
                     </svg>
                 </button>
-                <!-- Кнопка Выключения -->
                 <button class="sys-btn" id="btn-power" onclick="runSystemCommand('sys_power')">
                     <svg id="svg-power" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 21C7.029 21 3 16.971 3 12C3 8.358 5.17 5.228 8.243 3.666L9.141 5.45C6.837 6.623 5 8.956 5 12C5 15.86 8.14 19 12 19C15.86 19 19 15.86 19 12C19 8.956 17.163 6.623 14.859 5.45L15.757 3.666C18.83 5.228 21 8.358 21 12C21 16.971 16.971 21 12 21ZM11 2H13V12H11V2Z"/>
@@ -240,25 +299,133 @@
                 </button>
             </div>
             
+            <!-- Центр: Название -->
             <div class="header-text">
                 <h1>MALM PC</h1>
-                <h2>Выберите что запустить</h2>
+                <h2 id="subtitle">Выберите что запустить</h2>
+            </div>
+
+            <!-- Право: Кнопка навигации (переключается скриптом) -->
+            <div class="nav-buttons">
+                <!-- Кнопка Видеокарты -->
+                <button class="nav-btn" id="btn-nav-hw" onclick="switchPage('hw')">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 5V19H22V5H2ZM20 17H4V7H20V17ZM6 9H18V15H6V9ZM8 11V13H10V11H8ZM11 11V13H13V11H11ZM14 11V13H16V11H14Z"/>
+                        <path d="M5 21H19V23H5V21Z"/>
+                    </svg>
+                </button>
+                <!-- Кнопка Домика (изначально скрыта) -->
+                <button class="nav-btn" id="btn-nav-home" style="display: none;" onclick="switchPage('games')">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 3L2 12H5V20H19V12H22L12 3ZM10 18V14H14V18H10Z"/>
+                    </svg>
+                </button>
             </div>
         </div>
         
-        <div id="games-grid"></div>
-
-        <div class="footer">
-            <span id="status-dot"></span>
-            <span id="status-text">Система готова</span>
+        <!-- СТРАНИЦА 1: ИГРЫ -->
+        <div id="page-games" class="page active">
+            <div id="games-grid"></div>
         </div>
+
+        <!-- СТРАНИЦА 2: МОНИТОРИНГ (ПОКА ЗАГЛУШКИ) -->
+        <div id="page-hw" class="page">
+            <div class="hw-grid">
+                <!-- CPU Card -->
+                <div class="hw-card">
+                    <div class="hw-header">
+                        <div class="hw-title">⚙️ CPU</div>
+                        <div class="hw-model">Intel / AMD Processor</div>
+                    </div>
+                    <div class="hw-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Загрузка</span>
+                            <span class="stat-value">34%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Температура</span>
+                            <span class="stat-value temp-normal">45°C</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Частота</span>
+                            <span class="stat-value">4.2 GHz</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GPU Card -->
+                <div class="hw-card">
+                    <div class="hw-header">
+                        <div class="hw-title">🎮 GPU</div>
+                        <div class="hw-model">NVIDIA / AMD Graphics</div>
+                    </div>
+                    <div class="hw-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Загрузка</span>
+                            <span class="stat-value">89%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Температура</span>
+                            <span class="stat-value temp-hot">72°C</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">VRAM</span>
+                            <span class="stat-value">6.5 GB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RAM Card -->
+                <div class="hw-card">
+                    <div class="hw-header">
+                        <div class="hw-title">💾 ОЗУ</div>
+                        <div class="hw-model">DDR4 / DDR5</div>
+                    </div>
+                    <div class="hw-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Используется</span>
+                            <span class="stat-value">12.4 GB</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Свободно</span>
+                            <span class="stat-value">19.6 GB</span>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
     </div>
 
     <script>
         const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTc4YTg0NTEyY2Q5MDAxMzBlYWM2NSIsImlhdCI6MTc4NDEyNDkwNX0.83vjT_TzTttLnkXVDOUESncUMaVQkuejm4F0KmQEuVY";
         const COMPUTER = "MALM%20PC";
 
-        // Обработка системных кнопок с паролем
+        // Логика переключения страниц
+        function switchPage(page) {
+            const pageGames = document.getElementById('page-games');
+            const pageHw = document.getElementById('page-hw');
+            const btnHw = document.getElementById('btn-nav-hw');
+            const btnHome = document.getElementById('btn-nav-home');
+            const subtitle = document.getElementById('subtitle');
+
+            if (page === 'hw') {
+                pageGames.classList.remove('active');
+                pageHw.classList.add('active');
+                btnHw.style.display = 'none';
+                btnHome.style.display = 'flex';
+                subtitle.innerText = 'Состояние системы';
+            } else {
+                pageHw.classList.remove('active');
+                pageGames.classList.add('active');
+                btnHome.style.display = 'none';
+                btnHw.style.display = 'flex';
+                subtitle.innerText = 'Выберите что запустить';
+            }
+        }
+
+        // Системные команды
         function runSystemCommand(triggerName) {
             const pass = prompt("Системная команда.\nВведите пароль для подтверждения:");
             if (pass !== "200208") {
@@ -279,10 +446,11 @@
                     }
                 })
                 .catch(() => {
-                    alert("Ошибка отправки системной команды. Проверьте интернет.");
+                    alert("Ошибка отправки. Проверьте интернет.");
                 });
         }
 
+        // Рендер игр
         const gamesList = [
             { name: "Fortnite", trigger: "fortnite", img: "fn.png" },
             { name: "Counter-Strike 2", trigger: "cs", img: "cs2.png" },
@@ -365,25 +533,6 @@
             };
             container.appendChild(item);
         });
-
-        const statusDot = document.getElementById('status-dot');
-        const statusText = document.getElementById('status-text');
-
-        function updateNetworkStatus() {
-            if (navigator.onLine) {
-                statusDot.style.backgroundColor = '#32d74b';
-                statusDot.style.boxShadow = '0 0 10px rgba(50, 215, 75, 0.4)';
-                statusText.innerText = 'Система готова';
-            } else {
-                statusDot.style.backgroundColor = '#ff453a';
-                statusDot.style.boxShadow = '0 0 10px rgba(255, 69, 58, 0.4)';
-                statusText.innerText = 'Нет интернета';
-            }
-        }
-
-        window.addEventListener('online', updateNetworkStatus);
-        window.addEventListener('offline', updateNetworkStatus);
-        updateNetworkStatus();
     </script>
 </body>
 </html>
