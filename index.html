@@ -3,143 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MALM PC | Terminal</title>
+    <title>MALM PC Control</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
-            background-color: #0a0a0a;
-            color: #d1d1d1; 
+            background-color: #0e0e12;
+            color: #ffffff; 
             font-family: 'Inter', sans-serif; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            display: flex; flex-direction: column; align-items: center; 
             min-height: 100vh; 
+            padding: 40px 20px;
             -webkit-font-smoothing: antialiased;
         }
 
         .container { 
             width: 100%; 
-            max-width: 440px; 
-            padding: 40px 30px; 
-            background: #0a0a0a;
+            max-width: 480px; 
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Строгая шапка */
+        /* Приветливая шапка */
         .header {
-            margin-bottom: 50px;
-            border-bottom: 1px solid #222;
-            padding-bottom: 20px;
-        }
-
-        h1 { 
-            font-size: 14px; 
-            font-weight: 500;
-            letter-spacing: 4px; 
-            color: #ffffff;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        p.subtitle { 
-            color: #555; 
-            font-size: 10px; 
-            font-weight: 400;
-            letter-spacing: 2px; 
-            text-transform: uppercase;
-        }
-
-        /* Список команд */
-        #buttons-container { 
-            display: flex; flex-direction: column; 
-        }
-
-        .btn { 
-            display: flex; align-items: center;
-            width: 100%; 
-            padding: 24px 0; 
-            background: transparent;
-            color: #d1d1d1; 
-            border: none;
-            border-bottom: 1px solid #1a1a1a; 
-            font-family: inherit; 
-            font-size: 14px; 
-            font-weight: 400; 
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            cursor: pointer; 
-            transition: all 0.4s ease;
+            margin-bottom: 25px;
             text-align: left;
         }
 
-        /* Нумерация вместо детских эмодзи */
-        .btn span.index { 
-            font-size: 10px;
-            color: #555;
-            margin-right: 20px;
-            letter-spacing: 1px;
-            transition: color 0.4s ease;
+        h1 { 
+            font-size: 20px; 
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
         }
 
-        .btn span.text {
+        h2 { 
+            color: #9494a0; 
+            font-size: 15px; 
+            font-weight: 500;
+        }
+
+        /* Список игр */
+        #games-container { 
+            display: flex; flex-direction: column; gap: 12px; 
+        }
+
+        /* Карточка игры (User Friendly дизайн) */
+        .game-card { 
+            display: flex; align-items: center;
+            width: 100%; 
+            padding: 12px; 
+            background: #18181d;
+            border: 1px solid #282830; 
+            border-radius: 16px; 
+            cursor: pointer; 
+            transition: all 0.2s ease;
+            text-align: left;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Постер игры */
+        .game-cover {
+            width: 80px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 16px;
+            background-color: #000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .game-info {
             flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .btn span.status-label {
-            font-size: 10px;
-            color: #555;
-            letter-spacing: 1px;
+        .game-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e2e2e8;
+            margin-bottom: 2px;
         }
 
-        /* Благородные эффекты наведения */
-        .btn:hover:not(.disabled) { 
-            color: #ffffff;
-            padding-left: 10px;
-            border-bottom: 1px solid #444;
+        .game-status {
+            font-size: 12px;
+            color: #6c6c77;
+            font-weight: 500;
+            transition: color 0.3s;
         }
 
-        .btn:hover:not(.disabled) span.index {
-            color: #ffffff;
+        /* Эффекты наведения */
+        .game-card:hover:not(.disabled) { 
+            background: #202026;
+            border-color: #383844;
+            transform: translateY(-2px);
         }
 
-        .btn:active:not(.disabled) { 
-            color: #888;
-            transition: all 0.1s ease;
+        .game-card:active:not(.disabled) { 
+            transform: translateY(0) scale(0.98); 
+            background: #2a2a32;
         }
 
-        /* Состояние таймера */
-        .btn.disabled {
-            color: #333;
+        /* Состояние блокировки во время кулдауна */
+        .game-card.disabled {
+            opacity: 0.5;
             cursor: not-allowed;
-        }
-        
-        .btn.disabled span.index,
-        .btn.disabled span.status-label {
-            color: #333;
+            filter: grayscale(80%);
         }
 
-        /* Подвал со статусом */
+        /* Подвал со статусом системы */
         .footer { 
-            margin-top: 60px; 
-            font-size: 10px; 
-            font-weight: 400; 
-            color: #555; 
+            margin-top: 40px; 
+            padding-top: 20px;
+            border-top: 1px solid #282830;
+            font-size: 12px; 
+            font-weight: 500; 
+            color: #6c6c77; 
             display: flex; align-items: center; 
-            letter-spacing: 2px;
-            text-transform: uppercase;
         }
         
         #status-dot {
-            display: inline-block; width: 4px; height: 4px;
-            background-color: #555; 
+            display: inline-block; width: 8px; height: 8px;
+            background-color: #32d74b; 
             border-radius: 50%;
-            margin-right: 12px;
-            transition: all 0.4s;
-        }
-        
-        #status-dot.online {
-            background-color: #ffffff;
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+            margin-right: 8px;
+            box-shadow: 0 0 10px rgba(50, 215, 75, 0.4);
         }
     </style>
 </head>
@@ -147,14 +139,14 @@
     <div class="container">
         <div class="header">
             <h1>MALM PC</h1>
-            <p class="subtitle">System Control Interface</p>
+            <h2>Выберите что запустить</h2>
         </div>
         
-        <div id="buttons-container"></div>
+        <div id="games-container"></div>
 
         <div class="footer">
             <span id="status-dot"></span>
-            <span id="status-text">Ожидание сети</span>
+            <span id="status-text">Соединение установлено</span>
         </div>
     </div>
 
@@ -162,65 +154,98 @@
         const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTc4YTg0NTEyY2Q5MDAxMzBlYWM2NSIsImlhdCI6MTc4NDEyNDkwNX0.83vjT_TzTttLnkXVDOUESncUMaVQkuejm4F0KmQEuVY";
         const COMPUTER = "MALM%20PC";
 
+        // Массив игр с постерами (картинки берутся напрямую из базы Steam, а Фортнайт из Википедии)
         const gamesList = [
-            { name: "Fortnite", trigger: "fortnite" },
-            { name: "Counter-Strike", trigger: "cs" },
-            { name: "Foxhole", trigger: "foxhole" }
+            { 
+                name: "Fortnite", 
+                trigger: "fortnite", 
+                img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/FortniteLogo.svg/512px-FortniteLogo.svg.png" 
+            },
+            { 
+                name: "Counter-Strike 2", 
+                trigger: "cs", 
+                img: "https://cdn.akamai.steamstatic.com/steam/apps/730/capsule_231x87.jpg" 
+            },
+            { 
+                name: "Rust", 
+                trigger: "rust", 
+                img: "https://cdn.akamai.steamstatic.com/steam/apps/252490/capsule_231x87.jpg" 
+            },
+            { 
+                name: "Arma Reforger", 
+                trigger: "arma", 
+                img: "https://cdn.akamai.steamstatic.com/steam/apps/1874880/capsule_231x87.jpg" 
+            },
+            { 
+                name: "The Finals", 
+                trigger: "finals", 
+                img: "https://cdn.akamai.steamstatic.com/steam/apps/2073850/capsule_231x87.jpg" 
+            },
+            { 
+                name: "Foxhole", 
+                trigger: "foxhole", 
+                img: "https://cdn.akamai.steamstatic.com/steam/apps/505460/capsule_231x87.jpg" 
+            }
         ];
 
-        const container = document.getElementById('buttons-container');
+        const container = document.getElementById('games-container');
         let cooldownSeconds = 0;
 
+        // Обновление состояния кнопок
         function updateButtonsState() {
-            const buttons = document.querySelectorAll('.btn');
-            buttons.forEach(btn => {
-                const statusLabel = btn.querySelector('.status-label');
+            const cards = document.querySelectorAll('.game-card');
+            cards.forEach(card => {
+                const statusLabel = card.querySelector('.game-status');
                 if (cooldownSeconds > 0) {
-                    btn.classList.add('disabled');
-                    if (btn.dataset.isProcessing === "true") {
-                        statusLabel.innerText = `БЛОКИРОВКА [${cooldownSeconds}]`;
+                    card.classList.add('disabled');
+                    // Если эта кнопка была нажата, показываем таймер, остальным - ожидание
+                    if (card.dataset.active === "true") {
+                        statusLabel.innerText = `Запущено (откат ${cooldownSeconds}с)`;
+                        statusLabel.style.color = "#32d74b";
                     } else {
-                        statusLabel.innerText = "ОЖИДАНИЕ";
+                        statusLabel.innerText = "Ожидание...";
                     }
                 } else {
-                    btn.classList.remove('disabled');
-                    btn.dataset.isProcessing = "false";
-                    statusLabel.innerText = "ЗАПУСТИТЬ";
+                    card.classList.remove('disabled');
+                    card.dataset.active = "false";
+                    statusLabel.innerText = "Коснитесь для запуска";
+                    statusLabel.style.color = "#6c6c77";
                 }
             });
         }
 
-        gamesList.forEach((game, index) => {
-            const btn = document.createElement('button');
-            btn.className = 'btn';
-            btn.dataset.isProcessing = "false";
+        // Генерация карточек игр
+        gamesList.forEach(game => {
+            const card = document.createElement('div');
+            card.className = 'game-card';
+            card.dataset.active = "false";
             
-            // Форматируем номер (01, 02, 03)
-            const num = (index + 1).toString().padStart(2, '0');
-            
-            btn.innerHTML = `
-                <span class="index">${num} /</span>
-                <span class="text">${game.name}</span>
-                <span class="status-label">ЗАПУСТИТЬ</span>
+            card.innerHTML = `
+                <img class="game-cover" src="${game.img}" alt="${game.name}">
+                <div class="game-info">
+                    <div class="game-name">${game.name}</div>
+                    <div class="game-status">Коснитесь для запуска</div>
+                </div>
             `;
             
-            btn.onclick = function() {
+            card.onclick = function() {
                 if (!navigator.onLine) {
-                    alert("Системная ошибка: Отсутствует подключение к сети.");
+                    alert("Отсутствует подключение к сети.");
                     return;
                 }
 
                 if (cooldownSeconds > 0) return;
 
                 const url = `https://www.triggercmd.com/api/run/triggerSave?computer=${COMPUTER}&trigger=${game.trigger}&token=${TOKEN}`;
-                const statusLabel = this.querySelector('.status-label');
+                const statusLabel = this.querySelector('.game-status');
                 
-                this.dataset.isProcessing = "true";
-                statusLabel.innerText = "ОТПРАВКА...";
+                this.dataset.active = "true";
+                statusLabel.innerText = "Отправка команды...";
+                statusLabel.style.color = "#0a84ff"; // Синий цвет загрузки
 
                 fetch(url, { mode: 'no-cors' })
                     .then(() => {
-                        cooldownSeconds = 60;
+                        cooldownSeconds = 60; // Запуск минутного кулдауна
                         updateButtonsState();
                         
                         const timerInterval = setInterval(() => {
@@ -232,26 +257,33 @@
                         }, 1000);
                     })
                     .catch(() => {
-                        this.dataset.isProcessing = "false";
-                        statusLabel.innerText = "ОШИБКА";
+                        this.dataset.active = "false";
+                        statusLabel.innerText = "Ошибка запуска";
+                        statusLabel.style.color = "#ff453a";
                         setTimeout(() => {
-                            statusLabel.innerText = "ЗАПУСТИТЬ";
+                            if (cooldownSeconds <= 0) {
+                                statusLabel.innerText = "Коснитесь для запуска";
+                                statusLabel.style.color = "#6c6c77";
+                            }
                         }, 2000);
                     });
             };
-            container.appendChild(btn);
+            container.appendChild(card);
         });
 
+        // Логика индикатора сети
         const statusDot = document.getElementById('status-dot');
         const statusText = document.getElementById('status-text');
 
         function updateNetworkStatus() {
             if (navigator.onLine) {
-                statusDot.classList.add('online');
-                statusText.innerText = 'Терминал активен';
+                statusDot.style.backgroundColor = '#32d74b';
+                statusDot.style.boxShadow = '0 0 10px rgba(50, 215, 75, 0.4)';
+                statusText.innerText = 'Соединение установлено';
             } else {
-                statusDot.classList.remove('online');
-                statusText.innerText = 'Сбой подключения';
+                statusDot.style.backgroundColor = '#ff453a';
+                statusDot.style.boxShadow = '0 0 10px rgba(255, 69, 58, 0.4)';
+                statusText.innerText = 'Сбой подключения (оффлайн)';
             }
         }
 
