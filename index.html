@@ -5,106 +5,182 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MALM PC Control</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
         
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
-            background-color: #050505;
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(40, 20, 60, 0.4), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(15, 40, 80, 0.4), transparent 25%);
+            background-color: #0d0d12;
             color: #f5f5f7; 
-            font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; 
+            font-family: 'Inter', sans-serif; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             min-height: 100vh; 
-            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
+            position: relative;
         }
 
+        /* Плавающие сферы на фоне для демонстрации прозрачности */
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.6;
+            animation: float 14s ease-in-out infinite;
+        }
+        .orb-1 { top: 10%; left: -10%; width: 40vw; height: 40vw; background: rgba(0, 102, 255, 0.4); }
+        .orb-2 { bottom: 0; right: -5%; width: 50vw; height: 50vw; background: rgba(140, 20, 252, 0.3); animation-delay: -5s; animation-direction: reverse; }
+        .orb-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: rgba(0, 255, 170, 0.2); animation-delay: -2s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        /* Главная панель - толстое объемное стекло */
         .container { 
             width: 90%; 
-            max-width: 400px; /* Базовый размер для телефона */
-            background: rgba(28, 28, 30, 0.5); 
-            backdrop-filter: blur(50px) saturate(200%);
-            -webkit-backdrop-filter: blur(50px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 36px; 
-            padding: 40px 24px; 
+            max-width: 420px; 
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.4) 100%);
+            backdrop-filter: blur(25px) saturate(150%);
+            -webkit-backdrop-filter: blur(25px) saturate(150%);
+            
+            /* Сложные рамки для бликов на краях стекла */
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 1px solid rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.8);
+            
+            border-radius: 40px; 
+            padding: 45px 30px; 
             text-align: center; 
-            /* Сложная тень для эффекта объема */
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 20px 40px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+            
+            /* Комбинация падающей тени и внутреннего свечения */
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.7), 
+                0 10px 20px rgba(0, 0, 0, 0.5),
+                inset 0 2px 15px rgba(255, 255, 255, 0.1),
+                inset 0 -5px 20px rgba(0, 0, 0, 0.5);
         }
 
         h1 { 
-            font-size: 28px; font-weight: 700;
-            letter-spacing: 0.5px; 
-            margin-bottom: 4px; 
-            color: #ffffff;
+            font-size: 32px; font-weight: 900;
+            letter-spacing: 1px; 
+            margin-bottom: 5px; 
+            background: linear-gradient(180deg, #ffffff 0%, #a0a0b0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
         }
 
         p.subtitle { 
-            color: #86868b; 
-            font-size: 13px; 
-            font-weight: 600;
-            margin-bottom: 32px; 
-            letter-spacing: 1.5px; 
+            color: #888899; 
+            font-size: 12px; 
+            font-weight: 700;
+            margin-bottom: 40px; 
+            letter-spacing: 2px; 
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
 
         #buttons-container { 
-            display: flex; flex-direction: column; gap: 14px; 
+            display: flex; flex-direction: column; gap: 20px; 
         }
 
+        /* Выпуклые 3D кнопки */
         .btn { 
             display: flex; align-items: center; justify-content: center;
-            width: 100%; padding: 18px; 
-            background: rgba(255, 255, 255, 0.05); 
+            width: 100%; padding: 20px; 
+            
+            /* Градиент заливки для объема */
+            background: linear-gradient(180deg, rgba(60, 60, 65, 0.8) 0%, rgba(30, 30, 35, 0.9) 100%);
             color: #ffffff; 
-            border: 1px solid rgba(255, 255, 255, 0.03); 
-            border-radius: 20px; 
+            
+            /* Блики сверху, тени снизу */
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.9);
+            border-radius: 24px; 
+            
             font-family: inherit; 
-            font-size: 17px; font-weight: 600; 
+            font-size: 18px; font-weight: 700; 
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
             cursor: pointer; 
-            transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); 
+            
+            /* Высокая тень для имитации отрыва от фона */
+            box-shadow: 
+                0 10px 20px rgba(0, 0, 0, 0.4),
+                0 4px 6px rgba(0, 0, 0, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.1);
+                
+            transition: all 0.15s cubic-bezier(0.3, 0.8, 0.2, 1); 
         }
 
-        .btn span.icon { margin-right: 12px; font-size: 22px; }
+        .btn span.icon { 
+            margin-right: 15px; font-size: 24px; 
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+        }
 
-        .btn:hover { background: rgba(255, 255, 255, 0.09); }
-        .btn:active { transform: scale(0.96); background: rgba(255, 255, 255, 0.12); }
+        /* Наведение: кнопка слегка приподнимается */
+        .btn:hover { 
+            background: linear-gradient(180deg, rgba(70, 70, 75, 0.9) 0%, rgba(35, 35, 40, 1) 100%);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 15px 25px rgba(0, 0, 0, 0.5),
+                0 6px 10px rgba(0, 0, 0, 0.4),
+                inset 0 1px 3px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Нажатие: кнопка утапливается внутрь панели */
+        .btn:active { 
+            transform: translateY(4px); 
+            background: linear-gradient(180deg, rgba(25, 25, 30, 0.9) 0%, rgba(40, 40, 45, 0.8) 100%);
+            border-top: 1px solid rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.8),
+                inset 0 6px 15px rgba(0, 0, 0, 0.8);
+        }
 
         .footer { 
-            margin-top: 35px; 
-            font-size: 13px; font-weight: 500; color: #6e6e73; 
+            margin-top: 45px; 
+            font-size: 14px; font-weight: 700; color: #888899; 
             display: flex; align-items: center; justify-content: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
         
+        /* Объемный стеклянный диод */
         #status-dot {
-            display: inline-block; width: 8px; height: 8px;
-            background-color: #34c759; border-radius: 50%;
-            margin-right: 8px;
-            box-shadow: 0 0 8px rgba(52, 199, 89, 0.6);
-            transition: background-color 0.3s, box-shadow 0.3s;
+            display: inline-block; width: 12px; height: 12px;
+            background: radial-gradient(circle at 30% 30%, #a8ffb8, #34c759); 
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 1px solid rgba(0,0,0,0.8);
+            box-shadow: 
+                0 0 15px rgba(52, 199, 89, 0.6),
+                inset 0 -2px 4px rgba(0,0,0,0.5);
+            transition: background 0.3s, box-shadow 0.3s;
         }
 
-        /* АДАПТИВНОСТЬ ДЛЯ ПК И ПЛАНШЕТОВ */
         @media (min-width: 768px) {
-            body { background-size: cover; }
-            .container { 
-                max-width: 650px; /* Расширяем панель на ПК */
-                padding: 60px 50px; 
-                border-radius: 48px;
-            }
-            h1 { font-size: 42px; margin-bottom: 8px; }
-            p.subtitle { font-size: 16px; margin-bottom: 45px; }
-            #buttons-container { gap: 20px; }
-            .btn { padding: 24px; font-size: 20px; border-radius: 24px; }
-            .btn span.icon { font-size: 28px; margin-right: 16px; }
-            .footer { margin-top: 45px; font-size: 15px; }
+            .container { max-width: 700px; padding: 70px 60px; border-radius: 50px; }
+            h1 { font-size: 48px; }
+            p.subtitle { font-size: 16px; margin-bottom: 50px; }
+            #buttons-container { gap: 25px; }
+            .btn { padding: 25px; font-size: 22px; border-radius: 30px; }
+            .btn span.icon { font-size: 30px; margin-right: 20px; }
         }
     </style>
 </head>
 <body>
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+
     <div class="container">
         <h1>MALM PC</h1>
         <p class="subtitle">MALM CHAIR NFC</p>
@@ -113,7 +189,7 @@
 
         <div class="footer">
             <span id="status-dot"></span>
-            <span id="status-text">Система готова</span>
+            <span id="status-text">СИСТЕМА АКТИВНА</span>
         </div>
     </div>
 
@@ -140,19 +216,16 @@
                 const originalText = this.innerHTML;
                 this.innerHTML = `<span class="icon">⚙️</span> Запуск...`;
                 this.style.color = '#0a84ff';
-                this.style.borderColor = 'rgba(10, 132, 255, 0.4)';
 
                 fetch(url, { mode: 'no-cors' })
                     .then(() => {
                         setTimeout(() => {
                             this.innerHTML = `<span class="icon">✅</span> Отправлено`;
                             this.style.color = '#34c759'; 
-                            this.style.borderColor = 'rgba(52, 199, 89, 0.4)';
                             
                             setTimeout(() => {
                                 this.innerHTML = originalText;
                                 this.style.color = '#ffffff';
-                                this.style.borderColor = 'rgba(255, 255, 255, 0.03)';
                             }, 1500);
                         }, 400);
                     })
@@ -160,7 +233,6 @@
                         alert('Сбой отправки команды');
                         this.innerHTML = originalText;
                         this.style.color = '#ffffff';
-                        this.style.borderColor = 'rgba(255, 255, 255, 0.03)';
                     });
             };
             container.appendChild(btn);
@@ -172,13 +244,13 @@
 
         function updateNetworkStatus() {
             if (navigator.onLine) {
-                statusDot.style.backgroundColor = '#34c759';
-                statusDot.style.boxShadow = '0 0 8px rgba(52, 199, 89, 0.6)';
-                statusText.innerText = 'Связь установлена';
+                statusDot.style.background = 'radial-gradient(circle at 30% 30%, #a8ffb8, #34c759)';
+                statusDot.style.boxShadow = '0 0 15px rgba(52, 199, 89, 0.6), inset 0 -2px 4px rgba(0,0,0,0.5)';
+                statusText.innerText = 'СВЯЗЬ УСТАНОВЛЕНА';
             } else {
-                statusDot.style.backgroundColor = '#ff3b30';
-                statusDot.style.boxShadow = '0 0 8px rgba(255, 59, 48, 0.6)';
-                statusText.innerText = 'Нет подключения к сети';
+                statusDot.style.background = 'radial-gradient(circle at 30% 30%, #ffb8b8, #ff3b30)';
+                statusDot.style.boxShadow = '0 0 15px rgba(255, 59, 48, 0.6), inset 0 -2px 4px rgba(0,0,0,0.5)';
+                statusText.innerText = 'НЕТ ПОДКЛЮЧЕНИЯ';
             }
         }
 
