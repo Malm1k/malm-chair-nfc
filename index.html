@@ -12,311 +12,154 @@
         body { 
             background-color: #0e0e12; color: #ffffff; font-family: 'Inter', sans-serif; 
             display: flex; flex-direction: column; justify-content: flex-start; align-items: center; 
-            min-height: 100vh; padding: 55px 20px 40px 20px;
+            min-height: 100vh; padding: 40px 20px 40px 20px;
             -webkit-font-smoothing: antialiased; overflow-x: hidden;
         }
 
         .container { 
             width: 100%; max-width: 400px; display: flex; flex-direction: column;
-            min-height: calc(100vh - 95px); position: relative;
+            min-height: calc(100vh - 80px); position: relative;
         }
 
-        .top-bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; width: 100%; }
-        .sys-buttons { display: flex; gap: 12px; justify-content: flex-start; }
-        .sys-btn { background: transparent; border: none; cursor: pointer; outline: none; padding: 5px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
-        .sys-btn svg { width: 22px; height: 22px; transition: fill 0.3s ease, transform 0.2s ease; }
+        /* Новая шапка */
+        .top-bar { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            width: 100%; 
+            margin-bottom: 40px;
+        }
+
+        .sys-buttons { display: flex; gap: 15px; }
+        
+        .sys-btn { 
+            background: transparent; border: none; cursor: pointer; outline: none; 
+            padding: 5px; display: flex; align-items: center; justify-content: center; 
+            transition: all 0.2s ease; 
+        }
+        .sys-btn svg { width: 24px; height: 24px; transition: all 0.3s ease; }
         .sys-btn:active svg { transform: scale(0.85); }
-        #svg-lock { fill: #32d74b; } #svg-sleep { fill: #ffffff; opacity: 0.7; } #svg-power { fill: #ffffff; opacity: 0.7; }
-        .sys-btn.locked #svg-lock { fill: #ff453a; } .sys-btn.sleep-active #svg-sleep { fill: #ffd60a; opacity: 1; } .sys-btn.power-off #svg-power { fill: #ff453a; opacity: 1; } 
 
-        h1 { font-size: 22px; font-weight: 700; color: #ffffff; letter-spacing: 1px; text-align: center; }
+        /* Цвета иконок */
+        #svg-power, #svg-sleep, #svg-lock { fill: #ffffff; opacity: 0.7; }
+        #svg-restart { stroke: #ffffff; opacity: 0.7; }
 
-        .nav-buttons { display: flex; justify-content: flex-end; }
-        .nav-btn { background: transparent; border: none; cursor: pointer; outline: none; padding: 5px; display: flex; align-items: center; justify-content: center; }
-        .nav-btn svg { width: 28px; height: 28px; transition: transform 0.2s ease, opacity 0.2s ease; }
-        .nav-btn:active svg { transform: scale(0.85); opacity: 0.8; }
+        .sys-btn.power-off #svg-power { fill: #ff453a; opacity: 1; }
+        .sys-btn.sleep-active #svg-sleep { fill: #ffd60a; opacity: 1; }
+        .sys-btn.locked #svg-lock { fill: #32d74b; opacity: 1; }
+        
+        /* Анимация перезагрузки */
+        .sys-btn.restarting #svg-restart { 
+            stroke: #00a8ff; 
+            opacity: 1; 
+            animation: spin 1.5s linear infinite; 
+        }
 
-        .page { display: none; width: 100%; flex-direction: column; animation: fadeIn 0.3s ease; }
-        .page.active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Увеличенный заголовок */
+        h1 { 
+            font-size: 28px; 
+            font-weight: 700; 
+            color: #ffffff; 
+            letter-spacing: 2px; 
+            text-align: center; 
+            flex-grow: 1;
+        }
 
-        #page-games { margin-top: auto; margin-bottom: auto; }
-        #page-hw { margin-top: 35px; }
-
+        /* Сетка игр */
         h2 { color: #d1d1d6; font-size: 16px; font-weight: 600; text-align: center; margin-bottom: 35px; }
 
         #games-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px 15px; width: 100%; }
-        .shortcut-item { display: flex; flex-direction: column; align-items: center; width: 100px; cursor: pointer; background: transparent; border: none; outline: none; transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
-        .icon-wrapper { position: relative; width: 72px; height: 72px; border-radius: 18px; margin-bottom: 10px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3); background-color: #1c1c22; transition: all 0.2s ease; }
-        .icon-img { width: 100%; height: 100%; border-radius: 18px; object-fit: cover; }
-        .cooldown-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); border-radius: 18px; display: none; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
-        .cooldown-spinner { font-size: 18px; margin-bottom: 2px; animation: spin 2s linear infinite; }
-        .cooldown-time { font-size: 16px; font-weight: 700; color: #fff; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        .shortcut-name { font-size: 12px; font-weight: 500; color: #d1d1d6; text-align: center; line-height: 1.2; max-width: 90px; word-wrap: break-word; }
-        .shortcut-item:active:not(.disabled) .icon-wrapper { transform: translateY(2px) scale(0.95); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); filter: brightness(0.8); }
-        .shortcut-item.disabled { cursor: not-allowed; } .shortcut-item.disabled .icon-wrapper { box-shadow: none; }
-        .shortcut-item.active-cooldown .cooldown-overlay { display: flex; } .shortcut-item.disabled:not(.active-cooldown) .icon-wrapper { opacity: 0.4; filter: grayscale(100%); }
-
-        .hw-grid { display: flex; flex-direction: column; gap: 15px; width: 100%; }
-        .hw-card { background: #1c1c22; border-radius: 16px; padding: 20px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .hw-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
-        .hw-title { font-size: 16px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px; }
-        .hw-model { font-size: 12px; color: #8e8e99; text-align: right; }
-        .hw-stats { display: flex; justify-content: space-between; }
-        .stat-item { display: flex; flex-direction: column; gap: 4px; flex: 1;}
-        .stat-label { font-size: 10px; color: #8e8e99; text-transform: uppercase; letter-spacing: 0.5px; }
-        .stat-value { font-size: 16px; font-weight: 700; color: #fff; }
-        .temp-hot { color: #ff453a; } .temp-normal { color: #32d74b; }
         
+        .shortcut-item { 
+            display: flex; flex-direction: column; align-items: center; 
+            width: 100px; cursor: pointer; background: transparent; border: none; 
+            outline: none; transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); 
+        }
+        
+        .icon-wrapper { 
+            position: relative; width: 72px; height: 72px; border-radius: 18px; 
+            margin-bottom: 10px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3); 
+            background-color: #1c1c22; transition: all 0.3s ease; 
+        }
+        .icon-img { width: 100%; height: 100%; border-radius: 18px; object-fit: cover; }
+        
+        .shortcut-name { font-size: 12px; font-weight: 500; color: #d1d1d6; text-align: center; line-height: 1.2; max-width: 90px; word-wrap: break-word; }
+        
+        /* Оверлей загрузки и таймера */
+        .cooldown-overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.7); border-radius: 18px; display: none; 
+            flex-direction: column; align-items: center; justify-content: center; 
+            backdrop-filter: blur(2px); transition: all 0.3s ease;
+        }
+        .status-icon { font-size: 22px; margin-bottom: 2px; }
+        .cooldown-time { font-size: 18px; font-weight: 700; color: #fff; }
+        
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        /* Состояния кнопок игр */
+        .shortcut-item:active:not(.disabled) .icon-wrapper { transform: translateY(2px) scale(0.95); }
+        .shortcut-item.disabled { cursor: not-allowed; } 
+        .shortcut-item.disabled:not(.active-action) .icon-wrapper { opacity: 0.4; filter: grayscale(100%); }
+        
+        .shortcut-item.active-action .cooldown-overlay { display: flex; }
+        
+        /* Зеленое свечение при успешном запуске */
+        .icon-wrapper.success-glow {
+            box-shadow: 0 0 20px rgba(50, 215, 75, 0.6);
+            border: 2px solid #32d74b;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         
+        <!-- Шапка: Выкл и Рестарт (Слева) | Название | Сон и Блок (Справа) -->
         <div class="top-bar">
             <div class="sys-buttons">
-                <button class="sys-btn" id="btn-lock" onclick="runSystemCommand('sys_lock')">
-                    <svg id="svg-lock" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C9.243 2 7 4.243 7 7V10H6C4.897 10 4 10.897 4 12V20C4 21.103 4.897 22 6 22H18C19.103 22 20 21.103 20 20V12C20 10.897 19.103 10 18 10H17V7C17 4.243 14.757 2 12 2ZM9 7C9 5.346 10.346 4 12 4C13.654 4 15 5.346 15 7V10H9V7ZM12 18C10.895 18 10 17.105 10 16C10 14.895 10.895 14 12 14C13.105 14 14 14.895 14 16C14 17.105 13.105 18 12 18Z"/></svg>
-                </button>
-                <button class="sys-btn" id="btn-sleep" onclick="runSystemCommand('sys_sleep')">
-                    <svg id="svg-sleep" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.368 13.568C19.539 13.843 18.663 14 17.75 14C12.918 14 9 10.082 9 5.25C9 4.337 9.157 3.461 9.432 2.632C5.748 3.654 3 7.126 3 11.25C3 16.082 6.918 20 11.75 20C15.874 20 19.346 17.252 20.368 13.568Z"/></svg>
-                </button>
                 <button class="sys-btn" id="btn-power" onclick="runSystemCommand('sys_power')">
                     <svg id="svg-power" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21C7.029 21 3 16.971 3 12C3 8.358 5.17 5.228 8.243 3.666L9.141 5.45C6.837 6.623 5 8.956 5 12C5 15.86 8.14 19 12 19C15.86 19 19 15.86 19 12C19 8.956 17.163 6.623 14.859 5.45L15.757 3.666C18.83 5.228 21 8.358 21 12C21 16.971 16.971 21 12 21ZM11 2H13V12H11V2Z"/></svg>
+                </button>
+                <button class="sys-btn" id="btn-restart" onclick="runSystemCommand('sys_restart')">
+                    <svg id="svg-restart" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                        <path d="M3 3v5h5"></path>
+                    </svg>
                 </button>
             </div>
             
             <h1>MALM PC</h1>
 
-            <div class="nav-buttons">
-                <button class="nav-btn" id="btn-nav-hw" onclick="switchPage('hw')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="5" width="18" height="11" rx="2" ry="2"></rect>
-                        <line x1="6" y1="16" x2="6" y2="19"></line>
-                        <line x1="10" y1="16" x2="10" y2="19"></line>
-                        <line x1="14" y1="16" x2="14" y2="19"></line>
-                        <circle cx="8.5" cy="10.5" r="2.5"></circle>
-                        <circle cx="15.5" cy="10.5" r="2.5"></circle>
-                    </svg>
+            <div class="sys-buttons">
+                <button class="sys-btn" id="btn-sleep" onclick="runSystemCommand('sys_sleep')">
+                    <svg id="svg-sleep" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.368 13.568C19.539 13.843 18.663 14 17.75 14C12.918 14 9 10.082 9 5.25C9 4.337 9.157 3.461 9.432 2.632C5.748 3.654 3 7.126 3 11.25C3 16.082 6.918 20 11.75 20C15.874 20 19.346 17.252 20.368 13.568Z"/></svg>
                 </button>
-                <button class="nav-btn" id="btn-nav-home" style="display: none;" onclick="switchPage('games')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                    </svg>
+                <button class="sys-btn" id="btn-lock" onclick="runSystemCommand('sys_lock')">
+                    <svg id="svg-lock" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C9.243 2 7 4.243 7 7V10H6C4.897 10 4 10.897 4 12V20C4 21.103 4.897 22 6 22H18C19.103 22 20 21.103 20 20V12C20 10.897 19.103 10 18 10H17V7C17 4.243 14.757 2 12 2ZM9 7C9 5.346 10.346 4 12 4C13.654 4 15 5.346 15 7V10H9V7ZM12 18C10.895 18 10 17.105 10 16C10 14.895 10.895 14 12 14C13.105 14 14 14.895 14 16C14 17.105 13.105 18 12 18Z"/></svg>
                 </button>
             </div>
         </div>
         
-        <div id="page-games" class="page active">
-            <h2>Выберите что запустить</h2>
-            <div id="games-grid"></div>
-        </div>
-
-        <div id="page-hw" class="page">
-            <h2>Состояние системы</h2>
-            
-            <div class="hw-grid">
-                <!-- CPU -->
-                <div class="hw-card">
-                    <div class="hw-header">
-                        <div class="hw-title">⚙️ CPU</div>
-                        <div class="hw-model" id="cpu-name">Загрузка данных...</div>
-                    </div>
-                    <div class="hw-stats">
-                        <div class="stat-item"><span class="stat-label">Загрузка</span><span class="stat-value" id="cpu-load">--</span></div>
-                        <div class="stat-item"><span class="stat-label">Нагрев</span><span class="stat-value temp-normal" id="cpu-temp">--</span></div>
-                        <div class="stat-item"><span class="stat-label">Частота</span><span class="stat-value" id="cpu-clock">--</span></div>
-                    </div>
-                </div>
-
-                <!-- GPU -->
-                <div class="hw-card">
-                    <div class="hw-header">
-                        <div class="hw-title">🎮 GPU</div>
-                        <div class="hw-model" id="gpu-name">Загрузка данных...</div>
-                    </div>
-                    <div class="hw-stats">
-                        <div class="stat-item"><span class="stat-label">Загрузка</span><span class="stat-value" id="gpu-load">--</span></div>
-                        <div class="stat-item"><span class="stat-label">Нагрев</span><span class="stat-value temp-hot" id="gpu-temp">--</span></div>
-                        <div class="stat-item"><span class="stat-label">VRAM</span><span class="stat-value" id="gpu-vram">--</span></div>
-                    </div>
-                </div>
-
-                <!-- ОЗУ -->
-                <div class="hw-card">
-                    <div class="hw-header">
-                        <div class="hw-title">💾 ОЗУ</div>
-                        <div class="hw-model">System Memory</div>
-                    </div>
-                    <div class="hw-stats">
-                        <div class="stat-item"><span class="stat-label">Занято</span><span class="stat-value" id="ram-used">--</span></div>
-                        <div class="stat-item"><span class="stat-label">Доступно</span><span class="stat-value" id="ram-free">--</span></div>
-                        <div class="stat-item"><span class="stat-label">Нагрузка</span><span class="stat-value" id="ram-load">--</span></div>
-                    </div>
-                </div>
-
-                <!-- SSD M.2 (пока заглушки, LHM часто их не отдает по сети) -->
-                <div class="hw-card">
-                    <div class="hw-header">
-                        <div class="hw-title">💽 SSD M.2</div>
-                        <div class="hw-model">Система и Игры</div>
-                    </div>
-                    <div class="hw-stats">
-                        <div class="stat-item"><span class="stat-label">Диск C:</span><span class="stat-value" id="ssd-c">-- GB</span></div>
-                        <div class="stat-item"><span class="stat-label">Диск D:</span><span class="stat-value" id="ssd-d">-- GB</span></div>
-                        <div class="stat-item"><span class="stat-label">Нагрев</span><span class="stat-value" id="ssd-temp">--°C</span></div>
-                    </div>
-                </div>
-
-                <!-- Помпа СЖО -->
-                <div class="hw-card">
-                    <div class="hw-header">
-                        <div class="hw-title">❄️ Помпа СЖО</div>
-                        <div class="hw-model">Liquid Cooler</div>
-                    </div>
-                    <div class="hw-stats">
-                        <div class="stat-item"><span class="stat-label">Обороты</span><span class="stat-value" id="aio-pump">-- RPM</span></div>
-                        <div class="stat-item"><span class="stat-label">Жидкость</span><span class="stat-value temp-normal" id="aio-temp">--°C</span></div>
-                        <div class="stat-item"><span class="stat-label">Вентиляторы</span><span class="stat-value" id="aio-fans">-- RPM</span></div>
-                    </div>
-                </div>
-
-                <!-- Сеть -->
-                <div class="hw-card">
-                    <div class="hw-header">
-                        <div class="hw-title">🌐 Сеть</div>
-                        <div class="hw-model">Ethernet / Wi-Fi</div>
-                    </div>
-                    <div class="hw-stats">
-                        <div class="stat-item"><span class="stat-label">Загрузка</span><span class="stat-value" id="net-down">-- Mbps</span></div>
-                        <div class="stat-item"><span class="stat-label">Отдача</span><span class="stat-value" id="net-up">-- Mbps</span></div>
-                        <div class="stat-item"><span class="stat-label">Ping</span><span class="stat-value temp-normal" id="net-ping">-- ms</span></div>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
+        <!-- Сетка игр -->
+        <h2>Выберите что запустить</h2>
+        <div id="games-grid"></div>
 
     </div>
 
     <script>
         const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTc4YTg0NTEyY2Q5MDAxMzBlYWM2NSIsImlhdCI6MTc4NDEyNDkwNX0.83vjT_TzTttLnkXVDOUESncUMaVQkuejm4F0KmQEuVY";
         const COMPUTER = "MALM%20PC";
-        const LHM_URL = "http://192.168.31.69:8085/data.json"; // Твой локальный IP
-        let hwInterval = null;
 
-        function switchPage(page) {
-            const pageGames = document.getElementById('page-games');
-            const pageHw = document.getElementById('page-hw');
-            const btnHw = document.getElementById('btn-nav-hw');
-            const btnHome = document.getElementById('btn-nav-home');
-
-            if (page === 'hw') {
-                pageGames.classList.remove('active');
-                pageHw.classList.add('active');
-                btnHw.style.display = 'none';
-                btnHome.style.display = 'flex';
-                
-                // Запускаем сбор данных
-                fetchHardwareData();
-                hwInterval = setInterval(fetchHardwareData, 2000); 
-            } else {
-                pageHw.classList.remove('active');
-                pageGames.classList.add('active');
-                btnHome.style.display = 'none';
-                btnHw.style.display = 'flex';
-                
-                // Останавливаем сбор, когда мы на странице игр
-                if (hwInterval) clearInterval(hwInterval);
-            }
-        }
-
-        async function fetchHardwareData() {
-            try {
-                const response = await fetch(LHM_URL);
-                const json = await response.json();
-                const data = extractLHMData(json);
-                updateHardwareUI(data);
-            } catch (e) {
-                console.log("Ошибка загрузки датчиков", e);
-            }
-        }
-
-        function extractLHMData(json) {
-            let pc = json.Children[0]; 
-            let hw = {
-                cpuName: '--', cpuLoad: '--', cpuTemp: '--', cpuClock: '--',
-                gpuName: '--', gpuLoad: '--', gpuTemp: '--', gpuVram: '--',
-                ramUsed: '--', ramFree: '--', ramLoad: '--'
-            };
-
-            function searchDeep(parent, categoryName, sensorKeyword) {
-                if (!parent.Children) return null;
-                let category = parent.Children.find(c => c.Text === categoryName);
-                if (category && category.Children) {
-                    let sensor = category.Children.find(s => s.Text.toLowerCase().includes(sensorKeyword.toLowerCase()));
-                    if (sensor) return sensor.Value;
-                }
-                return null;
-            }
-
-            function traverse(node) {
-                if (!node) return;
-                
-                // Ищем CPU
-                if (node.ImageURL && (node.ImageURL.includes('cpu') || node.ImageURL.includes('intel') || node.ImageURL.includes('amd'))) {
-                    hw.cpuName = node.Text;
-                    hw.cpuLoad = searchDeep(node, 'Load', 'total') || hw.cpuLoad;
-                    hw.cpuTemp = searchDeep(node, 'Temperatures', 'package') || searchDeep(node, 'Temperatures', 'core average') || searchDeep(node, 'Temperatures', 'tctl/tdie') || hw.cpuTemp;
-                    hw.cpuClock = searchDeep(node, 'Clocks', 'core #1') || searchDeep(node, 'Clocks', 'bus speed') || hw.cpuClock;
-                }
-
-                // Ищем GPU
-                if (node.ImageURL && (node.ImageURL.includes('nvidia') || node.ImageURL.includes('ati') || node.ImageURL.includes('gpu'))) {
-                    hw.gpuName = node.Text;
-                    hw.gpuLoad = searchDeep(node, 'Load', 'gpu core') || hw.gpuLoad;
-                    hw.gpuTemp = searchDeep(node, 'Temperatures', 'gpu core') || hw.gpuTemp;
-                    hw.gpuVram = searchDeep(node, 'Data', 'gpu memory used') || searchDeep(node, 'Load', 'gpu memory') || hw.gpuVram;
-                }
-
-                // Ищем RAM
-                if (node.ImageURL && node.ImageURL.includes('ram')) {
-                    hw.ramUsed = searchDeep(node, 'Data', 'memory used') || hw.ramUsed;
-                    hw.ramFree = searchDeep(node, 'Data', 'memory available') || hw.ramFree;
-                    hw.ramLoad = searchDeep(node, 'Load', 'memory') || hw.ramLoad;
-                }
-
-                if (node.Children) node.Children.forEach(traverse);
-            }
-
-            traverse(pc);
-            return hw;
-        }
-
-        function updateHardwareUI(data) {
-            document.getElementById('cpu-name').innerText = data.cpuName !== '--' ? data.cpuName : 'Процессор';
-            if (data.cpuLoad !== '--') document.getElementById('cpu-load').innerText = data.cpuLoad;
-            if (data.cpuTemp !== '--') document.getElementById('cpu-temp').innerText = data.cpuTemp;
-            if (data.cpuClock !== '--') document.getElementById('cpu-clock').innerText = data.cpuClock;
-
-            document.getElementById('gpu-name').innerText = data.gpuName !== '--' ? data.gpuName : 'Видеокарта';
-            if (data.gpuLoad !== '--') document.getElementById('gpu-load').innerText = data.gpuLoad;
-            if (data.gpuTemp !== '--') document.getElementById('gpu-temp').innerText = data.gpuTemp;
-            if (data.gpuVram !== '--') document.getElementById('gpu-vram').innerText = data.gpuVram;
-
-            if (data.ramUsed !== '--') document.getElementById('ram-used').innerText = data.ramUsed;
-            if (data.ramFree !== '--') document.getElementById('ram-free').innerText = data.ramFree;
-            if (data.ramLoad !== '--') document.getElementById('ram-load').innerText = data.ramLoad;
-        }
-
+        // Системные команды
         function runSystemCommand(triggerName) {
-            const pass = prompt("Системная команда.\nВведите пароль для подтверждения:");
-            if (pass !== "200208") {
-                if (pass !== null) alert("Доступ запрещен. Неверный пароль.");
-                return;
+            // Пароль требуется ТОЛЬКО для выключения и перезагрузки
+            if (triggerName === 'sys_power' || triggerName === 'sys_restart') {
+                const pass = prompt("Системная команда.\nВведите пароль для подтверждения:");
+                if (pass !== "200208") {
+                    if (pass !== null) alert("Доступ запрещен. Неверный пароль.");
+                    return;
+                }
             }
 
             const url = `https://www.triggercmd.com/api/run/triggerSave?computer=${COMPUTER}&trigger=${triggerName}&token=${TOKEN}`;
@@ -326,6 +169,7 @@
                     if (triggerName === 'sys_lock') document.getElementById('btn-lock').classList.add('locked');
                     else if (triggerName === 'sys_sleep') document.getElementById('btn-sleep').classList.add('sleep-active');
                     else if (triggerName === 'sys_power') document.getElementById('btn-power').classList.add('power-off');
+                    else if (triggerName === 'sys_restart') document.getElementById('btn-restart').classList.add('restarting');
                 })
                 .catch(() => alert("Ошибка отправки. Проверьте интернет."));
         }
@@ -350,10 +194,12 @@
                 const timeLabel = item.querySelector('.cooldown-time');
                 if (cooldownSeconds > 0) {
                     item.classList.add('disabled');
-                    if (item.classList.contains('active-cooldown')) timeLabel.innerText = cooldownSeconds;
+                    if (item.classList.contains('active-action') && timeLabel.innerText !== '') {
+                        timeLabel.innerText = cooldownSeconds;
+                    }
                 } else {
                     item.classList.remove('disabled');
-                    item.classList.remove('active-cooldown');
+                    item.classList.remove('active-action');
                 }
             });
         }
@@ -365,7 +211,10 @@
             item.innerHTML = `
                 <div class="icon-wrapper">
                     <img class="icon-img" src="${game.img}" alt="${game.name}" onerror="this.src='https://ui-avatars.com/api/?name=${game.name.charAt(0)}&background=1c1c22&color=fff&size=200'">
-                    <div class="cooldown-overlay"><div class="cooldown-spinner">⚙️</div><div class="cooldown-time">60</div></div>
+                    <div class="cooldown-overlay">
+                        <div class="status-icon"></div>
+                        <div class="cooldown-time"></div>
+                    </div>
                 </div>
                 <div class="shortcut-name">${game.name}</div>
             `;
@@ -376,26 +225,44 @@
 
                 const url = `https://www.triggercmd.com/api/run/triggerSave?computer=${COMPUTER}&trigger=${game.trigger}&token=${TOKEN}`;
                 
-                this.classList.add('active-cooldown');
-                this.querySelector('.cooldown-spinner').style.display = 'block';
-                this.querySelector('.cooldown-time').innerText = '...';
+                const wrapper = this.querySelector('.icon-wrapper');
+                const statusIcon = this.querySelector('.status-icon');
+                const timeLabel = this.querySelector('.cooldown-time');
+
+                // Показываем прелоадер (шестеренку) пока идет запрос
+                this.classList.add('active-action');
+                statusIcon.innerHTML = '⚙️';
+                statusIcon.style.animation = 'spin 2s linear infinite';
+                timeLabel.innerText = '';
 
                 fetch(url, { mode: 'no-cors' })
                     .then(() => {
-                        this.querySelector('.cooldown-spinner').style.display = 'none';
-                        cooldownSeconds = 60;
-                        updateButtonsState();
+                        // Запрос успешен -> Включаем зеленую галочку на 2 секунды
+                        statusIcon.style.animation = 'none';
+                        statusIcon.innerHTML = '✔️';
+                        statusIcon.style.color = '#32d74b';
+                        wrapper.classList.add('success-glow');
 
-                        const timerInterval = setInterval(() => {
-                            cooldownSeconds--;
-                            if (cooldownSeconds <= 0) clearInterval(timerInterval);
+                        setTimeout(() => {
+                            // Убираем свечение и включаем таймер
+                            wrapper.classList.remove('success-glow');
+                            statusIcon.innerHTML = ''; 
+                            
+                            cooldownSeconds = 60;
                             updateButtonsState();
-                        }, 1000);
+
+                            const timerInterval = setInterval(() => {
+                                cooldownSeconds--;
+                                if (cooldownSeconds <= 0) {
+                                    clearInterval(timerInterval);
+                                    statusIcon.style.color = '#fff';
+                                }
+                                updateButtonsState();
+                            }, 1000);
+                        }, 2000); // Галочка горит 2 секунды
                     })
                     .catch(() => {
-                        this.classList.remove('active-cooldown');
-                        cooldownSeconds = 0;
-                        updateButtonsState();
+                        this.classList.remove('active-action');
                         alert("Сбой сети при отправке команды.");
                     });
             };
