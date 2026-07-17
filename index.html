@@ -21,17 +21,13 @@
             min-height: calc(100vh - 80px); position: relative;
         }
 
-        /* Шапка */
+        /* Шапка: Идеальное центрирование через Grid */
         .top-bar { 
-            display: flex; justify-content: space-between; align-items: center; 
+            display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; 
             width: 100%; margin-bottom: 40px;
         }
 
-        .sys-buttons { 
-            display: flex; gap: 15px; 
-            width: 75px; /* Фиксированная ширина для идеального центрирования заголовка */
-        }
-        
+        .sys-buttons { display: flex; gap: 15px; }
         .sys-buttons.right { justify-content: flex-end; }
         
         .sys-btn { 
@@ -43,11 +39,10 @@
         .sys-btn svg { width: 24px; height: 24px; transition: all 0.3s ease; }
         .sys-btn:active svg { transform: scale(0.85); }
 
-        /* Цвета иконок */
+        /* Цвета иконок системных кнопок */
         #svg-power, #svg-sleep { fill: #ffffff; opacity: 0.7; }
         #svg-restart { stroke: #ffffff; opacity: 0.7; }
         
-        /* Состояния кнопок питания и сна */
         .sys-btn.power-off #svg-power { fill: #ff453a; opacity: 1; }
         .sys-btn.sleep-active #svg-sleep { fill: #ffd60a; opacity: 1; }
         
@@ -68,21 +63,24 @@
         /* Увеличенный заголовок */
         h1 { 
             font-size: 28px; font-weight: 700; color: #ffffff; 
-            letter-spacing: 2px; text-align: center; flex-grow: 1;
+            letter-spacing: 2px; text-align: center;
         }
 
-        /* Сетка игр */
-        h2 { color: #d1d1d6; font-size: 16px; font-weight: 600; text-align: center; margin-bottom: 35px; }
+        /* Текст над играми */
+        h2 { 
+            color: #d1d1d6; font-size: 16px; font-weight: 600; text-align: center; 
+            margin-bottom: 35px; width: 100%; display: block;
+        }
 
-        /* Фиксируем ширину сетки для идеального центрирования нижнего ряда */
+        /* Сетка игр: Свободное центрирование Flexbox */
         #games-grid { 
             display: flex; flex-wrap: wrap; justify-content: center; 
-            gap: 25px 15px; width: 100%; max-width: 330px; margin: 0 auto; 
+            gap: 25px 20px; width: 100%;
         }
         
         .shortcut-item { 
             display: flex; flex-direction: column; align-items: center; 
-            width: 100px; cursor: pointer; background: transparent; border: none; 
+            width: 90px; cursor: pointer; background: transparent; border: none; 
             outline: none; transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); 
         }
         
@@ -93,16 +91,19 @@
         }
         .icon-img { width: 100%; height: 100%; border-radius: 18px; object-fit: cover; }
         
-        .shortcut-name { font-size: 12px; font-weight: 500; color: #d1d1d6; text-align: center; line-height: 1.2; max-width: 90px; word-wrap: break-word; }
+        .shortcut-name { 
+            font-size: 12px; font-weight: 500; color: #d1d1d6; text-align: center; 
+            line-height: 1.2; max-width: 90px; word-wrap: break-word; 
+        }
         
         /* Оверлей загрузки и таймера */
         .cooldown-overlay { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0, 0, 0, 0.7); border-radius: 18px; display: none; 
+            background: rgba(0, 0, 0, 0.75); border-radius: 18px; display: none; 
             flex-direction: column; align-items: center; justify-content: center; 
             backdrop-filter: blur(2px); transition: all 0.3s ease;
         }
-        .status-icon { font-size: 22px; margin-bottom: 2px; }
+        .status-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
         .cooldown-time { font-size: 18px; font-weight: 700; color: #fff; }
         
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -124,6 +125,7 @@
         
         <!-- Шапка -->
         <div class="top-bar">
+            <!-- Левый блок: Питание и Рестарт -->
             <div class="sys-buttons">
                 <button class="sys-btn" id="btn-power" onclick="runSystemCommand('sys_power')">
                     <svg id="svg-power" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21C7.029 21 3 16.971 3 12C3 8.358 5.17 5.228 8.243 3.666L9.141 5.45C6.837 6.623 5 8.956 5 12C5 15.86 8.14 19 12 19C15.86 19 19 15.86 19 12C19 8.956 17.163 6.623 14.859 5.45L15.757 3.666C18.83 5.228 21 8.358 21 12C21 16.971 16.971 21 12 21ZM11 2H13V12H11V2Z"/></svg>
@@ -136,18 +138,18 @@
                 </button>
             </div>
             
+            <!-- Центр: Название -->
             <h1>MALM PC</h1>
 
+            <!-- Правый блок: Сон и Блокировка -->
             <div class="sys-buttons right">
                 <button class="sys-btn" id="btn-sleep" onclick="runSystemCommand('sys_sleep')">
                     <svg id="svg-sleep" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.368 13.568C19.539 13.843 18.663 14 17.75 14C12.918 14 9 10.082 9 5.25C9 4.337 9.157 3.461 9.432 2.632C5.748 3.654 3 7.126 3 11.25C3 16.082 6.918 20 11.75 20C15.874 20 19.346 17.252 20.368 13.568Z"/></svg>
                 </button>
                 <button class="sys-btn" id="btn-lock" onclick="runSystemCommand('sys_lock')">
-                    <!-- Открытый замок (Зеленый) -->
                     <svg id="svg-lock-open" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M8 11V7c0-2.206 1.794-4 4-4s4 1.794 4 4v1h2V7c0-3.309-2.691-6-6-6S6 3.691 6 7v4H5c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V13c0-1.103-.897-2-2-2H8zm4 7c-1.104 0-2-.896-2-2s.896-2 2-2 2 .896 2 2-.896 2-2 2z"/>
                     </svg>
-                    <!-- Закрытый замок (Красный) -->
                     <svg id="svg-lock-closed" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M19 11h-1V7c0-3.309-2.691-6-6-6S6 3.691 6 7v4H5c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V13c0-1.103-.897-2-2-2zm-7 7c-1.104 0-2-.896-2-2s.896-2 2-2 2 .896 2 2-.896 2-2 2zm3-7H9V7c0-1.654 1.346-3 3-3s3 1.346 3 3v4z"/>
                     </svg>
@@ -200,6 +202,10 @@
         const container = document.getElementById('games-grid');
         let cooldownSeconds = 0;
 
+        // Чистые SVG иконки, чтобы iOS не подменяла их на системные эмодзи
+        const loaderSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 28px; height: 28px;"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>`;
+        const successSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="#32d74b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 32px; height: 32px;"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
         function updateButtonsState() {
             const items = document.querySelectorAll('.shortcut-item');
             items.forEach(item => {
@@ -242,15 +248,14 @@
                 const timeLabel = this.querySelector('.cooldown-time');
 
                 this.classList.add('active-action');
-                statusIcon.innerHTML = '⚙️';
-                statusIcon.style.animation = 'spin 2s linear infinite';
+                statusIcon.innerHTML = loaderSvg;
+                statusIcon.style.animation = 'spin 1.5s linear infinite';
                 timeLabel.innerText = '';
 
                 fetch(url, { mode: 'no-cors' })
                     .then(() => {
                         statusIcon.style.animation = 'none';
-                        statusIcon.innerHTML = '✔️';
-                        statusIcon.style.color = '#32d74b';
+                        statusIcon.innerHTML = successSvg;
                         wrapper.classList.add('success-glow');
 
                         setTimeout(() => {
@@ -264,7 +269,6 @@
                                 cooldownSeconds--;
                                 if (cooldownSeconds <= 0) {
                                     clearInterval(timerInterval);
-                                    statusIcon.style.color = '#fff';
                                 }
                                 updateButtonsState();
                             }, 1000);
