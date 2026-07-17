@@ -21,7 +21,6 @@
             min-height: 100vh; position: relative;
         }
 
-        /* Шапка с высоким z-index, чтобы игры ее не перекрывали */
         .top-bar { 
             display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; 
             width: 100%; margin-top: 10px; margin-bottom: 20px;
@@ -37,11 +36,9 @@
             transition: all 0.2s ease; color: rgba(255, 255, 255, 0.7);
         }
         
-        /* Единый стиль системных иконок */
         .sys-btn svg { width: 26px; height: 26px; transition: all 0.3s ease; stroke: currentColor; }
         .sys-btn:active svg { transform: scale(0.85); }
 
-        /* Состояния кнопок (цвета) */
         .sys-btn.power-off { color: #ff453a; }
         .sys-btn.sleep-active { color: #ffd60a; }
         
@@ -50,7 +47,6 @@
         .sys-btn.locked #svg-lock-open { display: none; }
         .sys-btn.locked #svg-lock-closed { display: block; color: #ff453a; }
         
-        /* Анимация перезагрузки (теперь крутится по направлению стрелки) */
         .sys-btn.restarting svg { 
             color: #00a8ff; 
             animation: spin 1.5s linear infinite; 
@@ -61,7 +57,6 @@
             letter-spacing: 2px; text-align: center;
         }
 
-        /* Контент */
         .main-content {
             flex-grow: 1;
             display: flex;
@@ -110,7 +105,6 @@
         .status-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
         .cooldown-time { font-size: 22px; font-weight: 700; color: #fff; text-align: center; }
         
-        /* Общая анимация вращения по часовой стрелке */
         @keyframes spin { 100% { transform: rotate(360deg); } }
         
         .shortcut-item:active:not(.disabled) .icon-wrapper { transform: translateY(2px) scale(0.95); }
@@ -201,7 +195,7 @@
 
         const gamesList = [
             { name: "Fortnite", trigger: "fortnite", img: "fn.png" },
-            { name: "Counter-Strike 2", trigger: "cs", img: "cs2.png" },
+            { name: "Counter-Strike 2", trigger: "cs2", img: "cs2.png" },
             { name: "Rust", trigger: "rust", img: "rust.png" },
             { name: "Arma Reforger", trigger: "armaref", img: "armaref.png" },
             { name: "The Finals", trigger: "finals", img: "finals.png" },
