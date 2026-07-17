@@ -12,19 +12,19 @@
         body { 
             background-color: #0e0e12; color: #ffffff; font-family: 'Inter', sans-serif; 
             display: flex; flex-direction: column; justify-content: flex-start; align-items: center; 
-            min-height: 100vh; padding: 40px 20px 40px 20px;
+            min-height: 100vh; padding: 0 20px 40px 20px;
             -webkit-font-smoothing: antialiased; overflow-x: hidden;
         }
 
         .container { 
             width: 100%; max-width: 400px; display: flex; flex-direction: column;
-            min-height: calc(100vh - 80px); position: relative;
+            min-height: 100vh; position: relative;
         }
 
-        /* Шапка прибита к верху */
+        /* Шапка прижата к верху, но с учетом статус-бара iOS */
         .top-bar { 
             display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; 
-            width: 100%; 
+            width: 100%; margin-top: 20px; margin-bottom: 20px;
         }
 
         .sys-buttons { display: flex; gap: 15px; }
@@ -62,7 +62,7 @@
             letter-spacing: 2px; text-align: center;
         }
 
-        /* Блок контента занимает всё оставшееся место и центрирует игры вертикально */
+        /* Блок контента центрируется, но чуть-чуть приподнят вверх */
         .main-content {
             flex-grow: 1;
             display: flex;
@@ -70,6 +70,7 @@
             justify-content: center;
             align-items: center;
             width: 100%;
+            margin-top: -30px; 
         }
 
         h2 { 
@@ -107,7 +108,7 @@
             backdrop-filter: blur(2px); transition: all 0.3s ease;
         }
         .status-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
-        .cooldown-time { font-size: 18px; font-weight: 700; color: #fff; }
+        .cooldown-time { font-size: 22px; font-weight: 700; color: #fff; text-align: center; } /* Увеличил цифры */
         
         @keyframes spin { 100% { transform: rotate(360deg); } }
         
@@ -126,7 +127,7 @@
 
     <div class="container">
         
-        <!-- Шапка (остается сверху) -->
+        <!-- Шапка -->
         <div class="top-bar">
             <div class="sys-buttons">
                 <button class="sys-btn" id="btn-power" onclick="runSystemCommand('sys_power')">
@@ -157,7 +158,7 @@
             </div>
         </div>
         
-        <!-- Контент (выравнивается по центру оставшегося места) -->
+        <!-- Контент -->
         <div class="main-content">
             <h2>Выберите что запустить</h2>
             <div id="games-grid"></div>
@@ -211,12 +212,14 @@
                 const timeLabel = item.querySelector('.cooldown-time');
                 if (cooldownSeconds > 0) {
                     item.classList.add('disabled');
+                    // Обновляем текст только если активно светится этот элемент
                     if (item.classList.contains('active-action') && timeLabel.innerText !== '') {
                         timeLabel.innerText = cooldownSeconds;
                     }
                 } else {
                     item.classList.remove('disabled');
                     item.classList.remove('active-action');
+                    timeLabel.innerText = ''; // Очищаем таймер при завершении
                 }
             });
         }
@@ -246,6 +249,7 @@
                 const statusIcon = this.querySelector('.status-icon');
                 const timeLabel = this.querySelector('.cooldown-time');
 
+                // 1. Показываем прелоадер
                 this.classList.add('active-action');
                 statusIcon.innerHTML = loaderSvg;
                 statusIcon.style.animation = 'spin 1.5s linear infinite';
@@ -253,15 +257,18 @@
 
                 fetch(url, { mode: 'no-cors' })
                     .then(() => {
+                        // 2. Успех -> Показываем зеленую галочку
                         statusIcon.style.animation = 'none';
                         statusIcon.innerHTML = successSvg;
                         wrapper.classList.add('success-glow');
 
                         setTimeout(() => {
+                            // 3. Через 2 секунды убираем галочку и включаем цифры таймера
                             wrapper.classList.remove('success-glow');
                             statusIcon.innerHTML = ''; 
                             
                             cooldownSeconds = 60;
+                            timeLabel.innerText = cooldownSeconds; // Показываем цифру 60
                             updateButtonsState();
 
                             const timerInterval = setInterval(() => {
